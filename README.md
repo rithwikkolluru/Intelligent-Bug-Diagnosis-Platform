@@ -1,928 +1,581 @@
-# Intelligent-Bug-Diagnosis-Platform
-An AI-powered multi-agent bug diagnosis platform using RAG, semantic similarity, historical defect analysis, and fix recommendation assistance.
-
 # Intelligent Bug Diagnosis Platform with Fix Recommendation Assistance
 
-## 1. Project Overview
+> An AI-powered debugging assistant that combines **Retrieval-Augmented Generation (RAG)**, **semantic search over historical defects** and **multi-agent orchestration** to diagnose software bugs and recommend evidence-backed fixes.
 
-The **Intelligent Bug Diagnosis Platform with Fix Recommendation Assistance** is an AI-powered software debugging and defect analysis system designed to help developers identify, understand, and resolve software issues more efficiently.
-
-In modern software development, debugging is a time-consuming process. Developers frequently encounter application crashes, unexpected behavior, runtime exceptions, compilation errors, and complex stack traces. Identifying the actual cause of these problems often requires manually examining error logs, searching documentation, reviewing source code, and investigating previously reported defects.
-
-Existing debugging workflows often depend heavily on individual experience and manual investigation. Although developers can search online repositories and issue trackers for similar problems, identifying relevant historical defects and translating their resolutions into actionable recommendations can still be difficult.
-
-This project aims to address these challenges by combining **Retrieval-Augmented Generation (RAG), semantic similarity search, historical defect analysis, and multi-agent AI orchestration** into a unified debugging assistance platform.
-
-Developers will be able to submit bug descriptions, stack traces, and error logs through a web-based interface. The platform will analyze the submitted information, retrieve similar historical defects from a knowledge base, identify potential root causes, detect duplicate or related issues, and generate context-aware fix recommendations.
-
-The system is designed to provide evidence-supported debugging assistance rather than simply generating generic answers.
-
-## 2. Problem Statement
-
-Software defects are an unavoidable part of application development and maintenance. When a defect occurs, developers need to determine:
-
-- What exactly went wrong?
-- Which component or module is responsible?
-- What caused the error?
-- Has a similar issue been reported previously?
-- How was the historical issue resolved?
-- What is the most appropriate way to fix the current problem?
-
-Finding answers to these questions can require significant time and technical effort.
-
-Traditional debugging approaches generally involve manual log inspection, keyword-based searches, reviewing issue trackers, and experimenting with possible solutions. These approaches can become inefficient when dealing with large codebases, complex stack traces, and thousands of historical bug reports.
-
-There is a need for an intelligent platform that can understand bug reports semantically, learn from historical defect information, and assist developers with structured diagnosis and actionable recommendations.
-
-## 3. Project Objectives
-
-The primary objective is to develop an intelligent debugging assistance platform that combines historical defect knowledge with AI-driven analysis.
-
-The major objectives are:
-
-1. Develop a centralized interface for submitting software bug reports, stack traces, and error logs.
-2. Collect publicly available historical defect reports from Mozilla, Apache, and Eclipse projects.
-3. Build a structured historical defect knowledge base containing descriptions, discussions, stack traces, metadata, and resolutions.
-4. Implement data cleaning, preprocessing, chunking, and embedding generation for historical defect information.
-5. Integrate a vector database to support semantic similarity search.
-6. Design a Retrieval-Augmented Generation pipeline to retrieve relevant historical defects before generating recommendations.
-7. Develop specialized AI agents for triage, log analysis, root cause investigation, duplicate detection, and remediation assistance.
-8. Implement an orchestration workflow to coordinate the agents and combine their findings.
-9. Generate structured diagnosis reports containing potential causes, supporting evidence, similar defects, and recommended fixes.
-10. Evaluate the platform using retrieval quality, duplicate detection performance, response quality, and system reliability.
-
-## 4. Proposed Solution
-
-The proposed platform follows a modular architecture consisting of a frontend application, backend API, historical defect knowledge base, vector retrieval system, and multi-agent diagnosis workflow.
-
-The development process begins with bug submission. A developer can paste a bug description or upload a supported file containing error logs or stack traces.
-
-The backend validates and preprocesses the submitted information. The system then passes the normalized bug information to the diagnosis workflow.
-
-The workflow uses specialized agents to analyze different aspects of the problem. At the same time, the RAG component searches the historical defect knowledge base for semantically related issues.
-
-The retrieved historical reports provide additional context for the diagnosis process. The system combines the agent findings and historical evidence to generate a structured diagnosis with potential root causes and recommended remediation steps.
-
-The final result is presented through the frontend dashboard.
-
-## 5. System Architecture
-
-The platform is divided into the following major components:
-
-### 5.1 Frontend Application
-
-The frontend provides the primary interface through which developers interact with the system.
-
-Planned responsibilities:
-
-- Bug report submission.
-- Direct text input for bug descriptions.
-- Stack trace and error log input.
-- File upload support.
-- Input validation and error handling.
-- Display of diagnosis results.
-- Display of similar historical defects.
-- Presentation of recommended fixes.
-- Diagnosis history and report details.
-
-**Proposed technology:** React.js with Vite.
-
-### 5.2 Backend API
-
-The backend manages application logic, request processing, data storage, and communication between system components.
-
-Planned responsibilities:
-
-- Receive bug reports from the frontend.
-- Validate incoming requests and uploaded files.
-- Normalize bug descriptions and error logs.
-- Store submitted reports and diagnosis records.
-- Communicate with the retrieval pipeline.
-- Invoke the multi-agent orchestration workflow.
-- Return structured diagnosis results.
-- Expose API endpoints for frontend integration.
-
-**Proposed technology:** Python with FastAPI.
-
-### 5.3 Historical Defect Knowledge Base
-
-The historical defect knowledge base stores previously reported software defects and their associated information.
-
-The initial knowledge base will use publicly available defect datasets associated with:
-
-- Mozilla
-- Apache
-- Eclipse
-
-Each historical defect will be processed into a consistent structure containing relevant information such as:
-
-- Defect identifier.
-- Project name.
-- Issue title or summary.
-- Description.
-- Stack trace, if available.
-- Comments or discussion.
-- Severity and priority.
-- Status and resolution.
-- Original source reference.
-
-The knowledge base will provide historical information that can be used to understand and investigate newly submitted bugs.
-
-### 5.4 Vector Database and Semantic Retrieval
-
-Traditional keyword-based search may fail to identify related defects when the same underlying issue is described using different terminology.
-
-To address this limitation, the platform will use semantic embeddings.
-
-The Sentence Transformers model will convert bug descriptions, error messages, stack traces, and historical defect chunks into numerical vector representations.
-
-These embeddings will be stored in ChromaDB.
-
-When a new bug is submitted:
-
-1. The submitted information is preprocessed.
-2. An embedding is generated.
-3. The vector database searches for semantically similar historical records.
-4. The most relevant results are retrieved.
-5. The retrieved information is passed to the diagnosis workflow as supporting context.
-
-The initial implementation will use cosine similarity for comparing vector representations.
-
-The retrieval pipeline may later be extended with keyword-based search, metadata filtering, and reranking to improve retrieval quality.
-
-### 5.5 Multi-Agent Diagnosis System
-
-The platform will use a multi-agent architecture to divide the debugging process into specialized tasks.
-
-Each agent will have a clearly defined responsibility and will return structured information to the orchestration workflow.
-
-#### A. Triage Agent
-
-The Triage Agent performs the initial classification of the submitted bug.
-
-Responsibilities:
-
-- Identify the type of software defect.
-- Estimate severity and priority.
-- Identify the potentially affected component.
-- Determine the programming language or technology involved.
-- Extract important information from the bug description.
-
-Expected output includes bug category, severity, priority, affected component, and initial observations.
-
-#### B. Log Analysis Agent
-
-The Log Analysis Agent examines stack traces, runtime errors, and application logs.
-
-Responsibilities:
-
-- Identify exception types.
-- Extract important stack frames.
-- Detect recurring error patterns.
-- Identify suspicious file paths and line references.
-- Highlight relevant error messages.
-- Summarize the technical evidence contained in the logs.
-
-#### C. Root Cause Analysis Agent
-
-The Root Cause Analysis Agent investigates the potential underlying cause of the submitted defect.
-
-Responsibilities:
-
-- Analyze the submitted bug information.
-- Review findings from the Log Analysis Agent.
-- Examine relevant historical defect reports.
-- Identify possible causes.
-- Distinguish between observed symptoms and potential underlying causes.
-- Provide supporting evidence for its conclusions.
-
-The agent should communicate uncertainty when the available information is insufficient to establish a reliable root cause.
-
-#### D. Duplicate Detection Agent
-
-The Duplicate Detection Agent identifies previously reported issues that may represent the same or closely related defect.
-
-Responsibilities:
-
-- Compare the submitted bug with historical defect records.
-- Use semantic similarity to identify related reports.
-- Examine titles, descriptions, stack traces, and metadata.
-- Rank potential duplicate reports.
-- Return relevant historical issue references.
-
-Semantic similarity alone will not be treated as proof that two issues are duplicates. The final classification should consider the actual content and context of the reports.
-
-#### E. Remediation Agent
-
-The Remediation Agent generates recommendations based on the findings of the other agents and the retrieved historical evidence.
-
-Responsibilities:
-
-- Review the suspected root cause.
-- Examine relevant historical resolutions.
-- Generate possible corrective actions.
-- Explain why a proposed fix may address the problem.
-- Identify potential risks or side effects.
-- Suggest validation and testing steps.
-
-The platform will present recommendations as AI-generated assistance. A suggested fix will not be considered verified unless it has been implemented and successfully tested.
-
-## 6. Agent Orchestration Workflow
-
-LangGraph will be used to coordinate the execution of specialized agents.
-
-The proposed workflow is:
-
-1. A developer submits a bug report.
-2. The backend validates and preprocesses the information.
-3. The Triage Agent classifies the issue.
-4. The Log Analysis Agent extracts relevant technical evidence.
-5. The retrieval pipeline searches the historical defect knowledge base.
-6. The Duplicate Detection Agent identifies potentially related defects.
-7. The Root Cause Analysis Agent investigates possible causes using the submitted information and retrieved evidence.
-8. The orchestration layer combines the findings.
-9. The Remediation Agent generates context-aware fix recommendations.
-10. The backend prepares a structured diagnosis response.
-11. The frontend displays the final diagnosis and supporting evidence.
-
-The orchestration workflow will be designed to support independent agent responsibilities, structured outputs, error handling, and future extensions.
-
-## 7. Retrieval-Augmented Generation (RAG) Pipeline
-
-RAG is a central component of this project.
-
-Instead of relying only on information contained in an LLM, the system retrieves relevant historical defect information and supplies it as additional context during diagnosis.
-
-The proposed RAG pipeline consists of the following stages.
-
-### Stage 1: Data Collection
-
-Collect publicly available historical defect information from Mozilla, Apache, and Eclipse sources.
-
-The collected information may include bug titles, descriptions, discussions, stack traces, resolutions, and issue metadata, depending on dataset availability.
-
-### Stage 2: Data Cleaning
-
-Raw defect datasets may contain incomplete records, duplicated reports, inconsistent formatting, HTML content, irrelevant text, and missing values.
-
-The preprocessing pipeline will:
-
-- Remove unnecessary formatting and HTML elements.
-- Normalize text fields.
-- Handle missing or invalid values.
-- Identify duplicate records.
-- Standardize field names.
-- Preserve original defect identifiers and source references.
-
-### Stage 3: Data Standardization
-
-Different defect tracking systems may use different field names and structures.
-
-The collected information will be mapped into a common historical defect schema to support consistent processing and retrieval.
-
-### Stage 4: Chunking
-
-Large defect reports may contain multiple types of information.
-
-The system will divide the available content into meaningful chunks, such as:
-
-- Bug summary and description.
-- Stack trace and error messages.
-- Developer discussion and comments.
-- Resolution and corrective actions.
-
-Each chunk will retain metadata connecting it to its original defect report.
-
-Chunking parameters will be tested to identify a suitable balance between context preservation and retrieval precision.
-
-### Stage 5: Embedding Generation
-
-Sentence Transformers will convert each processed chunk into a numerical vector.
-
-The initial model under consideration is:
-
-`sentence-transformers/all-MiniLM-L6-v2`
-
-The model will be evaluated for semantic retrieval quality, processing speed, and resource requirements before being adopted as the default embedding model.
-
-### Stage 6: Vector Indexing
-
-Generated embeddings will be stored in ChromaDB.
-
-Each vector record will include relevant metadata, such as:
-
-- Defect ID.
-- Project name.
-- Chunk type.
-- Source reference.
-- Severity.
-- Resolution status.
-
-This metadata will allow the retrieval system to filter and interpret search results more effectively.
-
-### Stage 7: Semantic Retrieval
-
-When a new bug is submitted:
-
-1. The input is cleaned and normalized.
-2. An embedding is generated.
-3. ChromaDB retrieves the most similar historical chunks.
-4. Relevant metadata is extracted.
-5. The retrieved evidence is passed to the diagnosis workflow.
-
-The initial implementation will retrieve the top five relevant results, with the number of results configurable for experimentation.
-
-### Stage 8: Context-Aware Diagnosis
-
-The retrieved defect information is supplied to the relevant agents.
-
-The system uses the historical descriptions, error patterns, and resolutions to support its investigation and remediation recommendations.
-
-The final output should distinguish between evidence retrieved from historical defects and conclusions generated by the AI agents.
-
-## 8. Technology Stack
-
-The following technologies are proposed for the initial implementation.
-
-| Component | Technology | Purpose |
-|---|---|---|
-| Frontend | React.js | User interface |
-| Frontend tooling | Vite | Development and build tooling |
-| Backend | Python | Core application logic |
-| API framework | FastAPI | REST API development |
-| Agent orchestration | LangGraph | Multi-agent workflow |
-| LLM integration | Provider-independent interface | AI reasoning and generation |
-| Embedding model | Sentence Transformers | Text embedding generation |
-| Initial embedding model | all-MiniLM-L6-v2 | Semantic representations |
-| Vector database | ChromaDB | Vector storage and retrieval |
-| Relational database | SQLite | Application and diagnosis records |
-| Data processing | Pandas, NumPy | Data cleaning and preprocessing |
-| Machine learning utilities | Scikit-learn | Evaluation and experimentation |
-| API testing | FastAPI Swagger UI | Endpoint testing |
-| Version control | Git and GitHub | Source code management |
-| Containerization | Docker | Planned deployment and reproducibility |
-
-The technology stack may be adjusted based on experimental results, performance requirements, resource constraints, and mentor feedback.
-
-## 9. Database Design
-
-The system will maintain structured records for submitted bugs, historical defects, processed chunks, and diagnosis results.
-
-### 9.1 BugReport
-
-Stores newly submitted bug reports.
-
-| Field | Description |
-|---|---|
-| bug_id | Unique identifier |
-| title | Bug title |
-| description | Detailed bug description |
-| stack_trace | Stack trace information |
-| error_logs | Associated error logs |
-| programming_language | Language or technology |
-| severity | Estimated severity |
-| source_type | Paste or file upload |
-| created_at | Submission timestamp |
-| status | Processing status |
-
-### 9.2 HistoricalDefect
-
-Stores standardized historical defect information.
-
-| Field | Description |
-|---|---|
-| defect_id | Original or normalized defect identifier |
-| project | Mozilla, Apache, Eclipse, etc. |
-| summary | Defect title |
-| description | Detailed defect description |
-| comments | Available discussion |
-| resolution | Historical resolution |
-| severity | Reported severity |
-| priority | Reported priority |
-| status | Historical issue status |
-| source_url | Original issue reference |
-
-### 9.3 BugChunk
-
-Stores information about the chunks indexed for semantic retrieval.
-
-| Field | Description |
-|---|---|
-| chunk_id | Unique chunk identifier |
-| defect_id | Associated historical defect |
-| chunk_type | Description, log, comment, resolution |
-| chunk_text | Processed text |
-| embedding_id | Vector database reference |
-| metadata | Additional retrieval information |
-
-### 9.4 Diagnosis
-
-Stores the output generated by the diagnosis workflow.
-
-| Field | Description |
-|---|---|
-| diagnosis_id | Unique diagnosis identifier |
-| bug_id | Associated submitted bug |
-| root_cause | Potential root cause |
-| similar_defects | Retrieved related defects |
-| recommended_fix | Suggested corrective action |
-| confidence | Calibrated confidence or uncertainty |
-| validation_steps | Suggested verification steps |
-| created_at | Diagnosis timestamp |
-
-The initial implementation may use SQLite for application records and ChromaDB for vector representations.
-
-## 10. Bug Submission Module
-
-The Bug Submission Module will provide the entry point for developers to report software defects.
-
-### Planned Features
-
-**Direct Bug Submission**
-
-Users will be able to enter:
-
-- Bug title.
-- Bug description.
-- Stack trace.
-- Error logs.
-- Programming language or technology, where known.
-
-**File Upload**
-
-Users will be able to upload supported text-based files containing defect information.
-
-Initial supported formats:
-
-- `.txt`
-- `.log`
-- `.md`
-- `.json`
-- `.csv`
-
-File handling will include:
-
-- File extension and content validation.
-- File size restrictions.
-- Input sanitization.
-- Error handling for unsupported or malformed files.
-- Secure storage and processing.
-
-Uploaded scripts and binaries will not be executed. Sensitive information such as passwords, access tokens, and API keys should be redacted before external AI processing.
-
-## 11. Historical Dataset Collection
-
-The initial knowledge base will investigate public defect datasets associated with Mozilla, Apache, and Eclipse.
-
-Potential dataset and research references:
-
-**Mozilla CORE Dataset**
-
-https://zenodo.org/records/14229872
-
-This dataset will be investigated as a source of historical Mozilla defect information. The full dataset may be large, so the initial implementation will use a manageable sample.
-
-**Eclipse Defect Dataset**
-
-https://zenodo.org/records/15348468
-
-This dataset will be evaluated for historical defect information, available metadata, and compatibility with the common defect schema.
-
-**Apache and Mozilla Historical Defect Research**
-
-https://doi.org/10.1145/3593802
-
-This research reference will be used to understand historical defect datasets and their potential use in defect analysis.
-
-Dataset availability, structure, licensing, and redistribution conditions will be verified before downloading or publishing any data.
-
-The repository will document dataset sources, attribution, and any restrictions. Large raw datasets will not be committed directly to GitHub.
-
-## 12. Evaluation and Testing Strategy
-
-The platform will be evaluated at both component and system levels.
-
-### 12.1 API Testing
-
-The backend APIs will be tested for:
-
-- Successful bug submission.
-- Missing required fields.
-- Invalid file formats.
-- Malformed requests.
-- Oversized uploads.
-- Database storage.
-- Correct response structures.
-
-### 12.2 Data Processing Testing
-
-The preprocessing pipeline will be evaluated for:
-
-- Correct text extraction.
-- Missing value handling.
-- Duplicate identification.
-- Consistent schema conversion.
-- Chunk generation.
-- Metadata preservation.
-
-### 12.3 Semantic Retrieval Testing
-
-The retrieval system will be evaluated using a manually reviewed test set of bug reports and their relevant historical defects.
-
-Important metrics include:
-
-**Precision@K**
-
-Measures how many of the top K retrieved results are relevant.
-
-**Recall@K**
-
-Measures how many of the relevant historical defects are successfully retrieved within the top K results.
-
-**Mean Reciprocal Rank (MRR)**
-
-Measures how highly the first relevant result appears in the retrieved ranking.
-
-The initial retrieval configuration will use top-five results, followed by experiments with different values of K.
-
-### 12.4 Duplicate Detection Evaluation
-
-Duplicate detection will be evaluated using labeled pairs of bug reports.
-
-Metrics:
-
-- Precision.
-- Recall.
-- F1-score.
-
-This evaluation will help determine whether the system can distinguish genuinely related defects from reports that only share similar terminology.
-
-### 12.5 Diagnosis Quality Evaluation
-
-Generated diagnoses will be reviewed for:
-
-- Correct identification of error patterns.
-- Relevance of historical evidence.
-- Plausibility of root cause explanations.
-- Relevance of recommended fixes.
-- Traceability of supporting evidence.
-- Appropriate communication of uncertainty.
-
-### 12.6 Performance Evaluation
-
-The system will also track:
-
-- Dataset preprocessing time.
-- Embedding generation time.
-- Vector indexing time.
-- Retrieval latency.
-- API response time.
-- Diagnosis generation time.
-
-Evaluation results will be documented rather than reporting assumed or unverified performance improvements.
-
-## 13. Development Roadmap
-
-The project will be implemented in milestones, with each phase producing a testable deliverable.
-
-### Milestone 1: Research, Architecture, Submission Module, and Historical Knowledge Base
-
-**Objective:** Establish the technical foundation of the platform.
-
-**Phase 1: Research and Technical Understanding**
-
-- Study software defect analysis workflows.
-- Understand historical bug report structures.
-- Research Retrieval-Augmented Generation.
-- Study text embeddings and semantic similarity.
-- Compare vector database options.
-- Document the selected architecture and technology stack.
-
-**Phase 2: System Architecture**
-
-- Design the overall system architecture.
-- Define responsibilities of all five agents.
-- Design the LangGraph orchestration workflow.
-- Define the data flow between components.
-- Design the initial database schemas.
-- Document the system architecture and technology decisions.
-
-**Phase 3: Bug Submission Module**
-
-- Initialize the backend using FastAPI.
-- Implement bug submission endpoints.
-- Support direct text submission.
-- Implement file upload handling.
-- Validate incoming data.
-- Store submitted bug records.
-- Develop the initial React submission interface.
-- Test API functionality using Swagger UI.
-
-**Phase 4: Historical Defect Knowledge Base**
-
-- Investigate Mozilla, Apache, and Eclipse datasets.
-- Download manageable and permitted dataset samples.
-- Analyze dataset structures.
-- Clean and standardize defect records.
-- Implement text chunking.
-- Generate semantic embeddings.
-- Configure ChromaDB.
-- Index processed historical defects.
-- Test semantic retrieval using sample bug reports.
-
-**Expected Deliverables:**
-
-- GitHub repository with initial project structure.
-- Research and technical documentation.
-- System architecture diagram.
-- Agent responsibility documentation.
-- Database schema documentation.
-- Working bug submission interface.
-- FastAPI backend.
-- Historical defect preprocessing pipeline.
-- Initial ChromaDB knowledge base.
-- Semantic retrieval test results.
-
-### Milestone 2: Multi-Agent Diagnosis and RAG Integration
-
-**Objective:** Implement the core intelligence of the platform.
-
-Planned activities:
-
-- Develop the Triage Agent.
-- Implement the Log Analysis Agent.
-- Develop the Root Cause Analysis Agent.
-- Implement the Duplicate Detection Agent.
-- Develop the Remediation Agent.
-- Configure LangGraph orchestration.
-- Integrate the agents with the RAG retrieval pipeline.
-- Implement structured agent outputs.
-- Add error handling and fallback behavior.
-- Test the complete diagnosis workflow.
-
-**Expected Deliverables:**
-
-- Functional agent modules.
-- LangGraph orchestration workflow.
-- Integrated historical defect retrieval.
-- Initial diagnosis generation.
-- Similar defect identification.
-- Structured diagnosis responses.
-- Agent-level testing and documentation.
-
-### Milestone 3: Diagnosis Dashboard and End-to-End Integration
-
-**Objective:** Connect the frontend, backend, retrieval system, and agent workflow into a usable application.
-
-Planned activities:
-
-- Develop the diagnosis results interface.
-- Display identified error patterns.
-- Present potential root causes.
-- Display similar historical defects and source references.
-- Present recommended fixes and validation steps.
-- Implement diagnosis history.
-- Integrate frontend and backend APIs.
-- Improve error handling and user experience.
-- Perform end-to-end testing.
-
-**Expected Deliverables:**
-
-- Integrated web application.
-- Diagnosis dashboard.
-- Historical defect evidence display.
-- Fix recommendation interface.
-- Diagnosis history.
-- End-to-end testing results.
-
-### Milestone 4: Evaluation, Optimization, and Documentation
-
-**Objective:** Evaluate system quality and prepare the platform for demonstration and further development.
-
-Planned activities:
-
-- Build a labeled bug retrieval test set.
-- Evaluate Precision@K, Recall@K, and MRR.
-- Evaluate duplicate detection using Precision, Recall, and F1-score.
-- Analyze diagnosis quality.
-- Measure retrieval and processing latency.
-- Experiment with chunk sizes and embedding models.
-- Investigate hybrid retrieval and reranking.
-- Improve agent prompts and orchestration.
-- Document known limitations.
-- Prepare a complete project demonstration.
-
-**Expected Deliverables:**
-
-- Evaluation dataset and methodology.
-- Retrieval performance report.
-- Duplicate detection evaluation.
-- Diagnosis quality analysis.
-- Performance measurements.
-- Updated documentation.
-- Final project demonstration.
-
-## 14. Proposed Repository Structure
-
-The repository will follow a modular structure to keep the frontend, backend, data processing, documentation, and testing components separate.
-
-```text
-intelligent-bug-diagnosis-platform/
-│
-├── frontend/
-│   ├── public/
-│   └── src/
-│       ├── components/
-│       ├── pages/
-│       ├── services/
-│       ├── assets/
-│       ├── App.jsx
-│       └── main.jsx
-│
-├── backend/
-│   ├── app/
-│   │   ├── api/
-│   │   ├── core/
-│   │   ├── models/
-│   │   ├── schemas/
-│   │   ├── services/
-│   │   ├── agents/
-│   │   ├── rag/
-│   │   ├── database/
-│   │   └── main.py
-│   │
-│   └── requirements.txt
-│
-├── data/
-│   ├── raw/
-│   ├── processed/
-│   └── samples/
-│
-├── notebooks/
-│   ├── dataset_analysis.ipynb
-│   └── embedding_experiments.ipynb
-│
-├── docs/
-│   ├── research/
-│   ├── architecture/
-│   ├── diagrams/
-│   ├── tech-stack.md
-│   └── database-schema.md
-│
-├── tests/
-│
-├── .env.example
-├── .gitignore
-├── README.md
-└── LICENSE
-```
-
-The structure may evolve as the project grows. Individual modules will be introduced when their corresponding functionality is implemented.
-
-## 15. Security and Responsible AI Considerations
-
-The platform will process developer-submitted logs and defect information, which may contain sensitive technical details.
-
-The following practices will be considered throughout development:
-
-- Validate all uploaded files and restrict supported formats.
-- Avoid executing uploaded scripts or binaries.
-- Apply file size limits.
-- Sanitize and normalize submitted text.
-- Redact API keys, passwords, tokens, and other sensitive values before external AI processing.
-- Store API credentials in environment variables.
-- Exclude `.env` files and local database files from version control.
-- Preserve original source references for historical evidence.
-- Respect dataset licenses and attribution requirements.
-- Clearly distinguish retrieved facts from AI-generated conclusions.
-- Communicate uncertainty when evidence is insufficient.
-- Treat recommended fixes as suggestions until validated through testing.
-
-## 16. Current Development Status
-
-This section will be updated as development progresses.
-
-| Component | Status |
-|---|---|
-| Project requirements analysis | Planned / In Progress |
-| Technical research | Planned / In Progress |
-| System architecture | Planned / In Progress |
-| Agent responsibility design | Planned / In Progress |
-| Database schema | Planned / In Progress |
-| Bug submission API | Planned / In Progress |
-| Frontend submission interface | Planned / In Progress |
-| Historical dataset collection | Planned / In Progress |
-| Data preprocessing | Planned / In Progress |
-| Embedding generation | Planned / In Progress |
-| ChromaDB integration | Planned / In Progress |
-| Semantic retrieval evaluation | Planned / In Progress |
-| Multi-agent implementation | Planned |
-| End-to-end integration | Planned |
-| Final evaluation | Planned |
-
-Statuses should be changed only when the corresponding work has actually been completed and tested.
-
-## 17. Future Enhancements
-
-After completing the initial implementation, the platform may be extended with the following capabilities:
-
-- Hybrid semantic and keyword-based retrieval.
-- Cross-encoder reranking for improved retrieval relevance.
-- Support for additional programming languages and frameworks.
-- Integration with GitHub Issues and other defect tracking systems.
-- Source code context analysis.
-- Repository-level debugging assistance.
-- Automated test generation for recommended fixes.
-- Code patch generation with developer approval.
-- Feedback-based improvement of retrieval and recommendations.
-- Advanced diagnosis analytics.
-- Docker-based deployment.
-- User authentication and role-based access.
-- Support for larger historical defect collections.
-
-These enhancements will be considered after the core platform has been implemented and evaluated.
-
-## 18. Getting Started
-
-Installation and execution instructions will be expanded as the project modules become available.
-
-### Prerequisites
-
-- Python 3.10 or later, subject to dependency compatibility.
-- Node.js and npm.
-- Git.
-- A supported LLM provider or local model, when AI generation is integrated.
-
-### Clone the Repository
-
-```bash
-git clone https://github.com/YOUR_USERNAME/intelligent-bug-diagnosis-platform.git
-
-cd intelligent-bug-diagnosis-platform
-```
-
-### Backend Setup
-
-```bash
-cd backend
-
-python3 -m venv .venv
-
-source .venv/bin/activate
-
-pip install -r requirements.txt
-```
-
-Start the backend after the application entry point has been implemented:
-
-```bash
-uvicorn app.main:app --reload
-```
-
-The API documentation will be available at:
-
-```text
-http://127.0.0.1:8000/docs
-```
-
-### Frontend Setup
-
-Open another terminal:
-
-```bash
-cd frontend
-
-npm install
-
-npm run dev
-```
-
-The frontend development server will display its local address in the terminal.
-
-## 19. Conclusion
-
-The Intelligent Bug Diagnosis Platform with Fix Recommendation Assistance aims to make software defect investigation more systematic, evidence-driven, and efficient.
-
-By combining historical defect knowledge, semantic retrieval, Retrieval-Augmented Generation, and specialized AI agents, the platform will assist developers throughout the debugging process, from initial bug classification to root cause investigation and remediation recommendations.
-
-An important focus of the project is the use of historical defect evidence. Instead of generating recommendations without context, the platform will retrieve relevant past issues and use their descriptions and resolutions to support its analysis.
-
-The project will be developed incrementally, with emphasis on modular architecture, reproducible experiments, measurable evaluation, transparent recommendations, and maintainable implementation.
-
-The long-term goal is to create a practical AI-assisted debugging platform that helps developers understand software defects and make better-informed decisions when resolving them.
+Built as part of the **Infosys Springboard Virtual Internship**.
 
 ---
 
-## 20. Project Information
+## Table of Contents
 
-**Project Name:** Intelligent Bug Diagnosis Platform with Fix Recommendation Assistance
+1. [Overview](#overview)
+2. [Key Features](#key-features)
+3. [System Architecture](#system-architecture)
+4. [Agents and Orchestration](#agents-and-orchestration)
+5. [RAG Pipeline](#rag-pipeline)
+6. [Tech Stack](#tech-stack)
+7. [Data Model](#data-model)
+8. [Datasets](#datasets)
+9. [Bug Submission Module](#bug-submission-module)
+10. [API Endpoints](#api-endpoints-planned)
+11. [Evaluation Strategy](#evaluation-strategy)
+12. [Roadmap and Milestones](#roadmap-and-milestones)
+13. [Project Status](#project-status)
+14. [Repository Structure](#repository-structure)
+15. [Getting Started](#getting-started)
+16. [Security and Responsible AI](#security-and-responsible-ai)
+17. [Future Enhancements](#future-enhancements)
+18. [Author](#author)
 
-**Domain:** Artificial Intelligence, Software Engineering, Automated Debugging, Retrieval-Augmented Generation
+---
 
-**Core Technologies:** Python, FastAPI, React, LangGraph, Sentence Transformers, ChromaDB, SQLite
+## Overview
 
-**Development Approach:** Modular development with milestone-based implementation
+Debugging is slow. Developers read stack traces, search issue trackers and compare against past defects by hand. Keyword search often misses related bugs that are described in different words.
 
-**Version:** 0.1.0
+This platform lets a developer **paste or upload** a bug report, stack trace or error log. It then:
 
-**Repository:** https://github.com/YOUR_USERNAME/intelligent-bug-diagnosis-platform
+1. Parses and classifies the problem.
+2. Retrieves **semantically similar historical defects** from a knowledge base built on Mozilla, Apache and Eclipse bug data.
+3. Detects likely duplicates.
+4. Proposes root-cause hypotheses.
+5. Recommends fixes, **citing the historical evidence** each suggestion is based on.
+
+**Design principle:** every diagnosis separates *retrieved evidence* from *AI-generated conclusions*, and states uncertainty when evidence is weak. Suggested fixes are treated as unverified until tested.
+
+## Key Features
+
+- Bug submission by direct paste or file upload (`.txt`, `.log`, `.md`, `.json`, `.csv`)
+- Historical defect knowledge base (Mozilla, Apache, Eclipse)
+- Semantic retrieval of similar bugs with metadata filtering
+- Five specialised agents coordinated by LangGraph
+- Structured diagnosis: root causes, similar defects, fixes, validation steps, confidence
+- Input validation, file-type restrictions and secret redaction before LLM calls
+
+---
+
+## System Architecture
+
+### 1. Architectural Principles
+
+| Principle | What it means in this project |
+|---|---|
+| **Layered design** | UI, API, services, agents and data stores are separate layers; each talks only to the layer next to it. |
+| **Two pipelines** | An *offline* pipeline builds the knowledge base. An *online* pipeline diagnoses submitted bugs. They share the vector store and schemas. |
+| **Evidence first** | Agents receive retrieved historical defects as context and must cite them. Retrieved facts and AI conclusions are stored separately. |
+| **Structured contracts** | Every agent returns typed JSON (Pydantic schemas), so outputs can be validated, stored and displayed. |
+| **Provider independence** | The LLM and embedding model sit behind interfaces and can be swapped without changing agent logic. |
+| **Incremental delivery** | Milestone 1 delivers the foundation; later milestones plug into the same structure without redesign. |
+
+### 2. High-Level Architecture
+
+```mermaid
+flowchart TB
+    DEV["Developer"]
+
+    subgraph PRES["Presentation Layer"]
+        UI["React + Vite UI<br/>Submission page, Results dashboard, History"]
+    end
+
+    subgraph APIL["API Layer"]
+        API["FastAPI<br/>Routers, request validation, Pydantic schemas"]
+    end
+
+    subgraph SVC["Application Services"]
+        SUB["Submission Processor<br/>file validation, parsing, normalising, secret redaction"]
+        RSV["Retrieval Service<br/>query building, top-K search, filtering, merging"]
+        DSV["Diagnosis Service<br/>runs workflow, assembles response"]
+    end
+
+    subgraph AGL["Agent Layer"]
+        ORCH["Agent Orchestrator - LangGraph<br/>shared state, routing, retries, fallbacks"]
+        A1["Triage Agent"]
+        A2["Log Analysis Agent"]
+        A3["Duplicate Detection Agent"]
+        A4["Root Cause Agent"]
+        A5["Remediation Agent"]
+    end
+
+    subgraph DATA["Data Layer"]
+        SQL[("SQLite<br/>BugReport, Diagnosis")]
+        VDB[("ChromaDB<br/>chunk embeddings + metadata")]
+    end
+
+    subgraph EXT["External / Model Services"]
+        EMB["Embedding model<br/>Sentence Transformers"]
+        LLM["LLM provider<br/>Groq / Gemini / Ollama"]
+    end
+
+    DEV --> UI --> API
+    API --> SUB --> SQL
+    API --> DSV --> ORCH
+    ORCH --> A1 & A2 & A3 & A4 & A5
+    A1 & A2 & A3 & A4 & A5 --> LLM
+    A3 --> RSV
+    A4 --> RSV
+    RSV --> EMB
+    RSV --> VDB
+    DSV --> SQL
+    DSV --> API
+```
+
+### 3. Offline Pipeline: Building the Knowledge Base (Milestone 1)
+
+Run once per dataset sample, and again whenever new defects are added.
+
+```mermaid
+flowchart LR
+    S1["Mozilla dataset"] --> RAW
+    S2["Apache dataset"] --> RAW
+    S3["Eclipse dataset"] --> RAW
+    RAW["Raw data<br/>data/raw - not committed"] --> CLEAN["Cleaning<br/>strip HTML, handle nulls,<br/>remove exact duplicates"]
+    CLEAN --> STD["Standardisation<br/>map to HistoricalDefect schema"]
+    STD --> CHK["Chunking<br/>description, stack trace,<br/>comments, resolution"]
+    CHK --> EMBG["Embedding generation<br/>batched, cached"]
+    EMBG --> IDX["Vector indexing<br/>ChromaDB + metadata"]
+    IDX --> TEST["Retrieval tests<br/>Precision@K, Recall@K, MRR"]
+```
+
+Outputs of each stage are saved (`data/processed/`) so the pipeline can be re-run from any step.
+
+### 4. Online Pipeline: Request Flow
+
+```mermaid
+sequenceDiagram
+    actor Dev as Developer
+    participant UI as React UI
+    participant API as FastAPI
+    participant SUB as Submission Processor
+    participant DB as SQLite
+    participant ORCH as LangGraph Orchestrator
+    participant RAG as Retrieval Service
+    participant VDB as ChromaDB
+    participant LLM as LLM
+
+    Dev->>UI: Paste text or upload file
+    UI->>API: POST /api/bugs
+    API->>SUB: validate, parse, redact
+    SUB->>DB: store BugReport
+    API-->>UI: bug_id, status received
+
+    UI->>API: POST /api/diagnose/bug_id
+    API->>ORCH: start workflow with bug data
+    par Initial analysis
+        ORCH->>LLM: Triage Agent
+    and
+        ORCH->>LLM: Log Analysis Agent
+    end
+    ORCH->>RAG: retrieve evidence
+    RAG->>VDB: embed queries, search top-K with filters
+    VDB-->>RAG: chunks and metadata
+    RAG-->>ORCH: ranked historical evidence
+    ORCH->>LLM: Duplicate Detection Agent
+    ORCH->>LLM: Root Cause Agent
+    ORCH->>LLM: Remediation Agent
+    ORCH->>DB: store Diagnosis
+    API-->>UI: structured diagnosis with evidence
+```
+
+> In Milestone 1 the flow runs up to **store BugReport** and the **retrieval test path** (`POST /api/search`). The agent steps are implemented in Milestone 2.
+
+### 5. Component Responsibilities
+
+| Layer | Component | Responsibility | Technology | Milestone |
+|---|---|---|---|---|
+| Presentation | Submission page | Paste text, upload file, show validation errors | React, Vite | M1 |
+| Presentation | Results dashboard | Root causes, similar defects with source links, fixes, confidence | React | M3 |
+| API | Routers and schemas | Endpoints, request and response validation | FastAPI, Pydantic | M1 |
+| Services | Submission Processor | Type and size checks, stack-trace detection, normalisation, redaction | Python | M1 |
+| Services | Retrieval Service | Build queries, embed, search, filter, merge chunks per defect | Python, ChromaDB | M1 |
+| Services | Diagnosis Service | Start workflow, collect output, persist diagnosis | Python | M2 |
+| Agents | Orchestrator | Shared state, ordering, parallel and conditional steps, retries | LangGraph | M2 |
+| Agents | Five agents | Triage, log analysis, duplicates, root cause, remediation | LangGraph nodes + LLM | M2 |
+| Data | Relational store | Bug reports and diagnoses | SQLite, SQLAlchemy | M1 |
+| Data | Vector store | Chunk embeddings and metadata | ChromaDB | M1 |
+| Models | Embedding model | Text to vectors | Sentence Transformers | M1 |
+| Models | LLM | Reasoning and generation | Groq / Gemini / Ollama | M2 |
+
+### 6. Retrieval Design
+
+The retrieval service does more than a single similarity search:
+
+1. **Multiple queries per bug.** Separate queries are built from the description, the stack trace and the extracted error signature (exception type plus top frames), because each matches different chunk types.
+2. **Chunk-type awareness.** Trace queries search trace chunks; description queries search description chunks; resolution chunks are fetched for the best-matching defects.
+3. **Metadata filters.** Optional filters by project, component, severity or status narrow results.
+4. **Merge by defect.** Chunk hits are grouped by `defect_id`, so the agents see one ranked list of defects with their best-matching chunks.
+5. **Configurable top-K.** Default is 5, tuned during evaluation.
+6. **Similarity is a signal, not a verdict.** Scores are passed to agents with the evidence; thresholds are chosen from evaluation results.
+
+### 7. Shared Workflow State
+
+All agents read from and write to one typed state object, which keeps the workflow traceable and easy to test.
+
+| Field | Written by | Content |
+|---|---|---|
+| `bug` | Submission | Normalised `BugReport` |
+| `triage` | Triage Agent | category, severity, priority, component, language |
+| `log_findings` | Log Analysis Agent | exception type, key frames, error signature, summary |
+| `evidence` | Retrieval Service | ranked historical defects, chunks, scores, source links |
+| `duplicates` | Duplicate Detection Agent | candidate duplicates with rationale |
+| `root_causes` | Root Cause Agent | hypotheses, supporting evidence IDs, confidence |
+| `remediation` | Remediation Agent | fix steps, risks, validation steps, references |
+| `errors` | Any node | failures and fallbacks taken |
+| `status` | Orchestrator | pending, running, completed, partial, failed |
+
+### 8. Error Handling and Fallbacks
+
+| Failure | Behaviour |
+|---|---|
+| Unsupported, oversized or malformed upload | Rejected at the API with a clear error; nothing stored |
+| Empty or very short bug report | Request rejected with guidance on what to add |
+| No relevant historical matches | Diagnosis continues with a lower confidence and says no similar defects were found |
+| LLM timeout or rate limit | Retry with backoff, then fall back to the next configured provider or local model |
+| Invalid agent JSON | Validate against schema, retry once, otherwise mark that section as unavailable |
+| One agent fails | Workflow returns a `partial` diagnosis with the other sections instead of failing entirely |
+
+### 9. Key Design Decisions
+
+| Decision | Choice | Reason |
+|---|---|---|
+| Separate chunk types | Description, trace, comments and resolution are indexed separately | Stack traces and prose match differently; resolutions are what remediation needs |
+| Keep stack traces intact | No mid-trace splitting | A split trace loses the error pattern |
+| Vector store | ChromaDB | Local, free, persistent, supports metadata filtering; easy to set up for a prototype |
+| Embeddings | `all-MiniLM-L6-v2` first | Small and fast; compared against alternatives in evaluation |
+| Orchestration | LangGraph | Explicit state, parallel and conditional edges, retries |
+| Relational store | SQLite | Zero setup for development; can be replaced later |
+| Retrieval before generation | RAG instead of fine-tuning | Knowledge can be updated without retraining and answers can cite sources |
+
+### 10. Scalability and Deployment Path
+
+| Concern | Prototype | Later option |
+|---|---|---|
+| Relational data | SQLite | PostgreSQL |
+| Vector search | ChromaDB (local) | Qdrant or pgvector for larger collections |
+| Long diagnoses | Synchronous request | Background task queue with status polling |
+| Packaging | Local run | Docker and docker-compose (frontend, backend, vector store) |
+| Observability | Logs | Structured logging, request tracing, per-agent timing |
+
+> The architecture is refined as each milestone is delivered. The exported diagram (PNG/SVG) is kept in [`docs/diagrams/`](docs/diagrams/).
+
+---
+
+## Agents and Orchestration
+
+| Agent | Responsibility | Output |
+|---|---|---|
+| **Triage** | Classify defect type, estimate severity and priority, identify component and language | category, severity, priority, component, language |
+| **Log Analysis** | Extract exception types, key stack frames, file and line references, error patterns | exception, frames, error signature, summary |
+| **Duplicate Detection** | Rank similar historical reports using retrieval plus content comparison | candidate duplicates, similarity, rationale |
+| **Root Cause** | Form hypotheses from the submission, log findings and retrieved defects; separate symptoms from causes | hypotheses, evidence IDs, confidence |
+| **Remediation** | Propose fixes from the root cause and historical resolutions, with risks and tests | fix steps, risks, validation steps, references |
+
+**Orchestration flow**
+
+```mermaid
+flowchart TD
+    A["Bug submitted"] --> B["Validate + preprocess"]
+    B --> C["Triage Agent"]
+    B --> D["Log Analysis Agent"]
+    C --> E["RAG retrieval"]
+    D --> E
+    E --> F["Duplicate Detection Agent"]
+    F -->|"high-confidence duplicate"| H["Reuse linked resolution as evidence"]
+    F -->|"otherwise"| G["Root Cause Agent"]
+    H --> G
+    G --> R["Remediation Agent"]
+    R --> I["Structured diagnosis"]
+    I --> J["Display + store"]
+```
+
+> Semantic similarity alone is **not** treated as proof of a duplicate; the agent also compares the actual content, traces and metadata.
+
+---
+
+## RAG Pipeline
+
+| Stage | What happens |
+|---|---|
+| 1. Collect | Download permitted samples of Mozilla, Apache and Eclipse datasets |
+| 2. Clean | Strip HTML and boilerplate, handle missing values, remove exact duplicates, keep original IDs and source links |
+| 3. Standardise | Map all sources to one `HistoricalDefect` schema |
+| 4. Chunk | Separate chunks for description, stack trace, comments and resolution, each with metadata linking to its defect |
+| 5. Embed | Sentence Transformers (`all-MiniLM-L6-v2` first; alternatives compared) |
+| 6. Index | Store vectors plus metadata (defect ID, project, chunk type, severity, status) in ChromaDB |
+| 7. Retrieve | Embed the new bug, return the top 5 chunks (configurable) using cosine similarity |
+| 8. Diagnose | Pass evidence to the agents; output keeps retrieved facts and AI conclusions separate |
+
+**Chunking rules:** stack traces are kept intact rather than split mid-trace; resolutions get their own chunk; chunk sizes will be tuned experimentally.
+
+Later improvements: hybrid search (vector + BM25), metadata filtering, reranking.
+
+---
+
+## Tech Stack
+
+| Layer | Technology | Purpose |
+|---|---|---|
+| Frontend | React.js + Vite | User interface |
+| Backend | Python 3.11 + FastAPI | REST API |
+| Orchestration | LangGraph | Multi-agent workflow |
+| LLM | Provider-independent interface (Groq / Gemini free tiers; Ollama for local use) | Reasoning and generation |
+| Embeddings | Sentence Transformers (`all-MiniLM-L6-v2`) | Semantic vectors |
+| Vector DB | ChromaDB | Similarity search |
+| Relational DB | SQLite (SQLAlchemy) | Reports and diagnosis records |
+| Data processing | Pandas, NumPy | Cleaning and preprocessing |
+| ML utilities | Scikit-learn | Evaluation |
+| Testing | Pytest, Swagger UI | API and unit tests |
+| CI | GitHub Actions | Lint and tests on every push |
+| Containers | Docker | Planned for reproducible deployment |
+
+Choices may change based on experiments, resource limits and mentor feedback. Decisions and comparisons are recorded in [`docs/tech-stack.md`](docs/tech-stack.md).
+
+---
+
+## Data Model
+
+Full field definitions: [`docs/database-schema.md`](docs/database-schema.md).
+
+| Entity | Purpose | Key fields |
+|---|---|---|
+| **BugReport** | Newly submitted bugs | `bug_id`, `title`, `description`, `stack_trace`, `error_logs`, `programming_language`, `source_type`, `status`, `created_at` |
+| **HistoricalDefect** | Standardised historical bugs | `defect_id`, `project`, `summary`, `description`, `comments`, `resolution`, `severity`, `priority`, `status`, `source_url` |
+| **BugChunk** | Indexed retrieval units | `chunk_id`, `defect_id`, `chunk_type`, `chunk_text`, `embedding_id`, `metadata` |
+| **Diagnosis** | Workflow output | `diagnosis_id`, `bug_id`, `root_cause`, `similar_defects`, `recommended_fix`, `confidence`, `validation_steps`, `created_at` |
+
+Relationships: one `HistoricalDefect` has many `BugChunk`s; one `BugReport` has one or more `Diagnosis` records that reference `HistoricalDefect` IDs as evidence.
+
+---
+
+## Datasets
+
+| Source | Reference |
+|---|---|
+| Mozilla CORE dataset | https://zenodo.org/records/14229872 |
+| Eclipse defect dataset | https://zenodo.org/records/15348468 |
+| Apache / Mozilla defect research | https://doi.org/10.1145/3593802 |
+
+- Dataset structure, licence and redistribution terms are checked before use, and attribution is recorded here.
+- The full datasets are large, so development starts with a manageable sample.
+- **Raw datasets are not committed to the repository.** See [`data/README.md`](data/README.md) for download and preprocessing steps.
+
+---
+
+## Bug Submission Module
+
+**Direct input:** title, description, stack trace, error logs, language (optional).
+
+**File upload:** `.txt`, `.log`, `.md`, `.json`, `.csv`.
+
+Safeguards:
+
+- Extension and content validation, size limit, input sanitisation
+- Clear errors for unsupported or malformed files
+- Uploaded files are **never executed**
+- Passwords, tokens and API keys are redacted before any external LLM call
+
+---
+
+## API Endpoints (planned)
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/api/bugs` | Submit a bug report (pasted text) |
+| `POST` | `/api/bugs/upload` | Submit a bug report file |
+| `GET` | `/api/bugs/{bug_id}` | Retrieve a stored bug report |
+| `POST` | `/api/search` | Semantic search over the knowledge base |
+| `POST` | `/api/diagnose/{bug_id}` | Run the diagnosis workflow (Milestone 2) |
+| `GET` | `/api/diagnoses/{diagnosis_id}` | Retrieve a diagnosis (Milestone 2) |
+| `GET` | `/health` | Health check |
+
+Interactive docs: `http://127.0.0.1:8000/docs` once the backend is running.
+
+---
+
+## Evaluation Strategy
+
+Results will be documented from real measurements only.
+
+| Area | What is measured |
+|---|---|
+| API | Valid and invalid submissions, oversized or malformed files, response structure |
+| Data processing | Text extraction, missing values, duplicate handling, schema consistency, chunk and metadata integrity |
+| Retrieval | **Precision@K, Recall@K, MRR** on a reviewed test set (bugs with known duplicate links serve as ground truth) |
+| Duplicate detection | Precision, Recall, F1 on labelled pairs |
+| Diagnosis quality | Error-pattern accuracy, evidence relevance, root-cause plausibility, fix relevance, traceability, honest uncertainty |
+| Performance | Preprocessing, embedding and indexing time; retrieval latency; API and diagnosis response time |
+
+Experiments planned: embedding model comparison (MiniLM vs BGE), chunk size variants, vector-only vs hybrid retrieval.
+
+---
+
+## Roadmap and Milestones
+
+### Milestone 1: Foundation and Bug Understanding (current)
+
+| ID | Task | Deliverables |
+|---|---|---|
+| **M1.1** | Research and technical understanding | Research notes on defect workflows, RAG, embeddings, dataset structures; technology choices |
+| **M1.2** | System architecture | Architecture diagram, agent responsibilities, orchestration flow, schemas, data flow |
+| **M1.3** | Bug Submission Module | Submission UI and API, paste and upload, validation, storage |
+| **M1.4** | Historical Defect Knowledge Base | Cleaned datasets, chunking strategy, embeddings, ChromaDB index, retrieval tests |
+
+### Milestone 2: Multi-Agent Diagnosis and RAG Integration
+Implement the five agents, LangGraph orchestration, RAG integration, structured outputs, error handling and fallbacks.
+
+### Milestone 3: Dashboard and End-to-End Integration
+Diagnosis results UI, similar-defect evidence view, fix recommendations, diagnosis history, end-to-end tests.
+
+### Milestone 4: Evaluation, Optimisation and Documentation
+Labelled test set, retrieval and duplicate-detection metrics, latency measurements, hybrid retrieval and reranking experiments, final demo.
+
+---
+
+## Project Status
+
+Update these only when the work is **finished and tested**.
+
+**Milestone 1**
+
+- [ ] M1.1 Research and technical documentation
+- [ ] M1.2 System architecture diagram
+- [ ] M1.2 Agent responsibilities and orchestration design
+- [ ] M1.2 Database schemas
+- [ ] M1.3 Bug submission API
+- [ ] M1.3 Frontend submission interface
+- [ ] M1.4 Dataset collection and analysis
+- [ ] M1.4 Cleaning and standardisation pipeline
+- [ ] M1.4 Chunking and embedding generation
+- [ ] M1.4 ChromaDB indexing
+- [ ] M1.4 Semantic retrieval testing
+
+**Later milestones:** multi-agent implementation (M2), end-to-end integration (M3), final evaluation (M4) - planned.
+
+---
+
+## Repository Structure
+
+```text
+intelligent-bug-diagnosis-platform/
+├── frontend/                 # React + Vite app
+│   └── src/ (components, pages, services, assets)
+├── backend/
+│   ├── app/
+│   │   ├── api/              # routes
+│   │   ├── core/             # config, settings
+│   │   ├── models/           # ORM models
+│   │   ├── schemas/          # Pydantic schemas
+│   │   ├── services/         # submission, parsing, redaction
+│   │   ├── agents/           # agent modules (Milestone 2)
+│   │   ├── rag/              # chunking, embeddings, retrieval
+│   │   ├── database/
+│   │   └── main.py
+│   └── requirements.txt
+├── data/                     # raw/ (git-ignored), processed/, samples/
+├── notebooks/                # dataset analysis, embedding experiments
+├── docs/                     # research, architecture, diagrams, schemas
+├── tests/
+├── .github/workflows/        # CI
+├── .env.example
+├── .gitignore
+├── LICENSE
+└── README.md
+```
+
+Modules are added as each feature is implemented.
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- Python 3.11 (3.10+ should work, subject to dependency support)
+- Node.js 18+ and npm
+- Git
+- An LLM provider key (Groq or Gemini) or a local Ollama install, once generation is integrated (Milestone 2)
+
+### 1. Clone
+
+```bash
+git clone https://github.com/rithwikkolluru/intelligent-bug-diagnosis-platform.git
+cd intelligent-bug-diagnosis-platform
+```
+
+### 2. Backend
+
+```bash
+cd backend
+python3.11 -m venv .venv
+source .venv/bin/activate          # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+cp ../.env.example .env            # add your own keys; never commit .env
+uvicorn app.main:app --reload
+```
+
+API docs: http://127.0.0.1:8000/docs
+
+### 3. Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+### 4. Run tests
+
+```bash
+cd backend
+pytest
+```
+
+### 5. Build the knowledge base (once the pipeline is implemented)
+
+```bash
+python -m app.rag.build_index
+```
+
+Follow [`data/README.md`](data/README.md) to download the dataset samples first.
+
+---
+
+## Security and Responsible AI
+
+- Validate uploads, restrict formats and apply size limits; never execute uploaded files
+- Sanitise submitted text; redact secrets before external LLM calls
+- Keep credentials in environment variables; exclude `.env` and local databases from Git
+- Respect dataset licences and attribution; keep original source references
+- Clearly separate retrieved facts from AI-generated conclusions
+- Communicate uncertainty; treat fixes as suggestions until validated by tests
+
+---
+
+## Future Enhancements
+
+- Hybrid keyword + semantic retrieval and cross-encoder reranking
+- Support for more languages and frameworks
+- GitHub Issues and other tracker integrations
+- Source-code context and repository-level analysis
+- Automated test and patch generation with developer approval
+- Feedback loop to improve retrieval and recommendations
+- Docker deployment, authentication and role-based access
+- Larger historical defect collections
+
+---
+
+## Author
+
+**Kolluru Rithvik Chowdary**
+B.Tech (Integrated) CSE, JNTUH Kukatpally
+GitHub: [@rithwikkolluru](https://github.com/rithwikkolluru)
+
+**Mentor:** Devender Pratap, Infosys Springboard
+**Program:** Infosys Springboard Virtual Internship
+
+## License
+
+Released under the MIT License. See [`LICENSE`](LICENSE).
+
+---
+
+**Project:** Intelligent Bug Diagnosis Platform with Fix Recommendation Assistance | **Version:** 0.1.0 | **Domain:** AI, Software Engineering, Automated Debugging, RAG
