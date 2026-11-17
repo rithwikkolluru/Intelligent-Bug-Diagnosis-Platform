@@ -9,9 +9,11 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     DATABASE_URL: str = "sqlite:///./bugs.db"
     MAX_UPLOAD_MB: int = 5
-    ALLOWED_EXTENSIONS: list[str] = [".txt", ".log", ".md", ".json", ".csv"]
-    CORS_ORIGINS: list[str] = ["http://localhost:5173"]
+    ALLOWED_EXTENSIONS: list[str] | str = [".txt", ".log", ".md", ".json", ".csv"]
+    CORS_ORIGINS: list[str] | str = ["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:4173", "http://localhost:3000"]
     LOG_LEVEL: str = "INFO"
+    GEMINI_API_KEY: str | None = None
+    GEMINI_MODEL: str = "gemini-2.5-flash"
 
     model_config = SettingsConfigDict(
         env_file=str(Path(__file__).resolve().parents[3] / ".env"),

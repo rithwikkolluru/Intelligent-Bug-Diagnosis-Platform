@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
@@ -9,6 +10,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.api.bugs import router as bugs_router
+from app.api.diagnosis import router as diagnosis_router
 from app.api.health import router as health_router
 from app.core.config import get_settings
 from app.core.logging import configure_logging
@@ -17,7 +19,19 @@ from app.database.session import create_tables
 settings = get_settings()
 configure_logging()
 
-app = FastAPI(title="Intelligent Bug Diagnosis Platform", version="0.1.0")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Initialize database tables on startup
+    create_tables()
+    yield
+
+
+app = FastAPI(
+    title="Intelligent Bug Diagnosis Platform",
+    version="0.2.0",
+    lifespan=lifespan,
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -53,7 +67,8 @@ async def http_exception_handler(request: Request, exc: HTTPException):
 
 @app.exception_handler(SQLAlchemyError)
 async def sql_exception_handler(request: Request, exc: SQLAlchemyError):
-    return JSONResponse(status_code=500, content={"detail": "Database error.", "code": "INVALID_FIELD"})
+    logging.exception("Database error occurred")
+    return JSONResponse(status_code=500, content={"detail": "Database error.", "code": "DATABASE_ERROR"})
 
 
 @app.exception_handler(Exception)
@@ -67,8 +82,4 @@ async def generic_exception_handler(request: Request, exc: Exception):
 
 app.include_router(health_router)
 app.include_router(bugs_router)
-
-
-@app.on_event("startup")
-def startup_event() -> None:
-    create_tables()
+app.include_router(diagnosis_router)

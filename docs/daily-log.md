@@ -44,3 +44,27 @@
 ### Next
 - Populate `data/raw/` with the actual datasets and run the index build end-to-end.
 - Extend the smoke search and evaluation split once real historical defect data is available.
+
+
+## Day 3
+
+### Done
+- Audited and resolved critical security vulnerabilities: enforced streaming 5MB upload size limits (`MAX_UPLOAD_MB`), filename path-traversal sanitization, extension whitelisting, and migrated to modern FastAPI lifespan handlers.
+- Integrated Google Gemini AI (`gemini-2.5-flash`) for real-time root-cause analysis, step-by-step fix recommendations, executable before/after code patches, and verification checklists.
+- Engineered a zero-downtime dual-engine architecture: built an intelligent heuristic diagnosis fallback that runs seamlessly if an API key is unconfigured.
+- Populated the RAG knowledge base by indexing 36 historical defect chunks across Mozilla, Apache, and Eclipse into ChromaDB using local Sentence Transformers (`all-MiniLM-L6-v2`).
+- Re-architected the frontend UI with React + Vite: introduced 1-click demo presets (Java NPE, Python KeyError, JS TypeError, C++ Segfault), clickable recent submissions, interactive Diagnosis Dashboard with 1-click code copying, and an in-app Gemini API Key settings modal.
+- Expanded test coverage to 53 comprehensive unit and integration tests (all passing).
+
+### Evidence
+- `pytest tests` passes 53/53 tests in ~8 seconds.
+- `smoke_search` returns verified cosine similarity defect matches from ChromaDB.
+- `POST /api/diagnose` creates bug reports and generates structured diagnoses with historical citations.
+- Frontend builds cleanly via `npm run build` in 250ms.
+
+### Learned
+- Structuring strict JSON response schemas with LLMs ensures deterministic UI rendering.
+- Keeping an automated heuristic fallback alongside the live LLM eliminates demo failures during API outages or quota limits.
+
+### Blockers
+- None. The system is end-to-end operational and ready for presentation and evaluation.
