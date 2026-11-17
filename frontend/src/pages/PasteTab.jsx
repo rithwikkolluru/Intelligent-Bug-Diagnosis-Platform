@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import api from '../services/api';
 
 const initialForm = {
@@ -9,117 +9,192 @@ const initialForm = {
   programming_language: 'Auto-detect',
 };
 
-const languageOptions = ['Java', 'Python', 'JavaScript', 'C/C++', 'Other', 'Auto-detect'];
+const languageOptions = ['Auto-detect', 'Java', 'Python', 'JavaScript', 'C/C++', 'Go', 'Rust', 'Other'];
 
-function PasteTab({ onSaved }) {
+function PasteTab({ samples = [], onSaved, onDiagnosed }) {
   const [form, setForm] = useState(initialForm);
+  const [autoDiagnose, setAutoDiagnose] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState(null);
   const [error, setError] = useState('');
+
+  const handleSelectSample = (sample) => {
+    setForm({
+      title: sample.title,
+      description: sample.description,
+      stack_trace: sample.stack_trace,
+      error_logs: sample.error_logs,
+      programming_language: sample.programming_language || 'Auto-detect',
+    });
+    setError('');
+  };
+
+  const handleClear = () => {
+    setForm(initialForm);
+    setError('');
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (!form.title.trim() || !form.description.trim()) {
+      setError('Title and Description are required.');
+      return;
+    }
+
     setLoading(true);
     setError('');
-    setResult(null);
+
+    const payload = {
+      title: form.title.trim(),
+      description: form.description.trim(),
+      stack_trace: form.stack_trace.trim() || undefined,
+      error_logs: form.error_logs.trim() || undefined,
+      programming_language: form.programming_language === 'Auto-detect' ? undefined : form.programming_language,
+    };
 
     try {
-      const payload = {
-        title: form.title,
-        description: form.description,
-        stack_trace: form.stack_trace || undefined,
-        error_logs: form.error_logs || undefined,
-        programming_language: form.programming_language === 'Auto-detect' ? 'Other' : form.programming_language,
-      };
-      const response = await api.post('/api/bugs', payload);
-      setResult(response.data);
-      onSaved?.();
-      setForm(initialForm);
+      if (autoDiagnose) {
+        // One-shot submit & diagnose
+        const response = await api.post('/api/diagnose', payload);
+        const { bug, diagnosis } = response.data;
+        onSaved?.();
+        onDiagnosed?.(bug, diagnosis);
+      } else {
+        // Submission only
+        const response = await api.post('/api/bugs', payload);
+        onSaved?.();
+        onDiagnosed?.(response.data, null);
+      }
     } catch (err) {
       const detail = err.response?.data;
-      setError(detail?.detail || 'Submission failed.');
+      const message = typeof detail?.detail === 'string' ? detail.detail : 'Submission failed. Please check inputs.';
+      setError(message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form className="submission-form" onSubmit={handleSubmit}>
-      <h2>Paste Bug Report</h2>
-      <label>
-        Title
-        <input
-          type="text"
-          value={form.title}
-          onChange={(event) => setForm({ ...form, title: event.target.value })}
-          placeholder="e.g. NullPointerException in user service"
-          required
-        />
-      </label>
-
-      <label>
-        Description
-        <textarea
-          value={form.description}
-          onChange={(event) => setForm({ ...form, description: event.target.value })}
-          rows={5}
-          required
-        />
-      </label>
-
-      <label>
-        Stack trace
-        <textarea
-          value={form.stack_trace}
-          onChange={(event) => setForm({ ...form, stack_trace: event.target.value })}
-          rows={6}
-          className="monospace"
-        />
-      </label>
-
-      <label>
-        Error logs
-        <textarea
-          value={form.error_logs}
-          onChange={(event) => setForm({ ...form, error_logs: event.target.value })}
-          rows={5}
-          className="monospace"
-        />
-      </label>
-
-      <label>
-        Language
-        <select
-          value={form.programming_language}
-          onChange={(event) => setForm({ ...form, programming_language: event.target.value })}
-        >
-          {languageOptions.map((option) => (
-            <option key={option} value={option}>{option}</option>
-          ))}
-        </select>
-      </label>
-
-      {error && <div className="alert alert-error">{error.detail || error}</div>}
-
-      <button type="submit" disabled={loading}>
-        {loading ? 'Submitting…' : 'Submit bug'}
-      </button>
-
-      {result && (
-        <div className="result-card">
-          <h3>Submission saved</h3>
-          <p><strong>Bug ID:</strong> {result.bug_id}</p>
-          <p><strong>Status:</strong> {result.status}</p>
-          <p><strong>Detected language:</strong> {result.programming_language || 'Unknown'}</p>
-          <p><strong>Stack trace detected:</strong> {result.stack_trace ? 'Yes' : 'No'}</p>
-          <p><strong>Secrets redacted:</strong> {result.redaction_count}</p>
-          <p><strong>Created:</strong> {new Date(result.created_at).toLocaleString()}</p>
-          {result.stack_trace && (
-            <pre className="trace-box">{result.stack_trace}</pre>
-          )}
+    <div className="tab-content-wrapper">
+      {/* Quick Sample Presets */}
+      {samples.length > 0 && (
+        <div className="samples-bar">
+          <span className="samples-label">⚡ Quick Presets:</span>
+          <div className="samples-buttons">
+            {samples.map((sample) => (
+              <button
+                key={sample.id}
+                type="button"
+                className="btn-sample"
+                onClick={() => handleSelectSample(sample)}
+                title="Populate form with this realistic bug scenario"
+              >
+                {sample.label}
+              </button>
+            ))}
+          </div>
         </div>
       )}
-    </form>
+
+      <form className="submission-form" onSubmit={handleSubmit}>
+        <div className="form-header-row">
+          <h3>Paste Bug Report or Stack Trace</h3>
+          <button type="button" className="btn-text" onClick={handleClear}>Clear Form</button>
+        </div>
+
+        <label>
+          <span className="label-text">Bug Title <span className="req">*</span></span>
+          <input
+            type="text"
+            value={form.title}
+            onChange={(event) => setForm({ ...form, title: event.target.value })}
+            placeholder="e.g. NullPointerException in AuthenticationService.authenticate()"
+            required
+            maxLength={300}
+          />
+          <span className="field-hint">{form.title.length}/300 characters</span>
+        </label>
+
+        <div className="form-grid-2">
+          <label>
+            <span className="label-text">Programming Language</span>
+            <select
+              value={form.programming_language}
+              onChange={(event) => setForm({ ...form, programming_language: event.target.value })}
+            >
+              {languageOptions.map((option) => (
+                <option key={option} value={option}>{option}</option>
+              ))}
+            </select>
+          </label>
+
+          <div className="privacy-badge-container">
+            <span className="privacy-pill">🛡️ Secret Redaction Active</span>
+            <span className="privacy-desc">Passwords and API keys are scrubbed before storage & LLM calls.</span>
+          </div>
+        </div>
+
+        <label>
+          <span className="label-text">Problem Description & Reproduction Steps <span className="req">*</span></span>
+          <textarea
+            value={form.description}
+            onChange={(event) => setForm({ ...form, description: event.target.value })}
+            rows={4}
+            placeholder="Describe what occurred, expected vs actual behavior, and steps to reproduce..."
+            required
+            minLength={10}
+          />
+        </label>
+
+        <label>
+          <span className="label-text">Stack Trace (Optional)</span>
+          <textarea
+            value={form.stack_trace}
+            onChange={(event) => setForm({ ...form, stack_trace: event.target.value })}
+            rows={5}
+            className="monospace"
+            placeholder="Paste raw stack trace here (e.g. java.lang.NullPointerException, Traceback...)"
+          />
+        </label>
+
+        <label>
+          <span className="label-text">Error Logs / System Context (Optional)</span>
+          <textarea
+            value={form.error_logs}
+            onChange={(event) => setForm({ ...form, error_logs: event.target.value })}
+            rows={4}
+            className="monospace"
+            placeholder="Server log lines, HTTP response errors, or console output..."
+          />
+        </label>
+
+        <div className="checkbox-row">
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              checked={autoDiagnose}
+              onChange={(e) => setAutoDiagnose(e.target.checked)}
+            />
+            <span>Auto-diagnose with AI (Gemini + RAG Retrieval) immediately upon submission</span>
+          </label>
+        </div>
+
+        {error && <div className="alert alert-error">{error}</div>}
+
+        <div className="form-actions">
+          <button type="submit" className="btn-primary btn-large" disabled={loading}>
+            {loading ? (
+              <span className="btn-loading">
+                <span className="spinner"></span> Analyzing & Diagnosing with Gemini…
+              </span>
+            ) : autoDiagnose ? (
+              '⚡ Submit & Diagnose with AI'
+            ) : (
+              'Save Bug Report Only'
+            )}
+          </button>
+        </div>
+      </form>
+    </div>
   );
 }
 

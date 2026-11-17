@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any
 
 from fastapi import UploadFile
 from sqlalchemy.orm import Session
 
+from app.core.config import get_settings
 from app.models.bug import BugReport
 from app.services.parsing import ParsingError, parse_upload
 from app.services.redaction import redact_secrets
@@ -92,12 +94,22 @@ def handle_uploaded_file(db: Session, file: UploadFile, title: str | None = None
     if not file.filename:
         raise SubmissionError("Uploaded file is missing a filename.", "INVALID_FIELD")
 
-    content = file.file.read()
+    safe_filename = Path(file.filename).name
+    suffix = Path(safe_filename).suffix.lower()
+    settings = get_settings()
+
+    if suffix not in settings.ALLOWED_EXTENSIONS:
+        raise SubmissionError(f"Unsupported file extension: {suffix}", "UNSUPPORTED_FILE_TYPE")
+
+    max_bytes = settings.MAX_UPLOAD_MB * 1024 * 1024
+    content = file.file.read(max_bytes + 1)
     if not content or not content.strip():
         raise SubmissionError("Uploaded file is empty.", "EMPTY_INPUT")
+    if len(content) > max_bytes:
+        raise SubmissionError(f"Uploaded file exceeds maximum allowed size of {settings.MAX_UPLOAD_MB} MB.", "FILE_TOO_LARGE")
 
     try:
-        parsed = parse_upload(file.filename, content)
+        parsed = parse_upload(safe_filename, content)
     except ParsingError as exc:
         raise SubmissionError(exc.message, exc.code) from exc
 
@@ -110,4 +122,4 @@ def handle_uploaded_file(db: Session, file: UploadFile, title: str | None = None
     }
     if len(str(payload["title"]).strip()) < 3:
         raise SubmissionError("Title must be at least 3 characters long.", "INVALID_FIELD")
-    return create_bug_record(db, payload, source_type="upload", original_filename=file.filename)
+    return create_bug_record(db, payload, source_type="upload", original_filename=safe_filename)
