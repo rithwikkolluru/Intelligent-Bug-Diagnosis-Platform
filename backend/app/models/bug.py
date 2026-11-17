@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 
 from sqlalchemy import DateTime, String, Text
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.base import Base
 
@@ -26,3 +26,5 @@ class BugReport(Base):
         default=lambda: datetime.now(timezone.utc),
         nullable=False,
     )
+
+    diagnoses = relationship("Diagnosis", back_populates="bug", cascade="all, delete-orphan")
