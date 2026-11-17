@@ -1,0 +1,16 @@
+[
+  {
+    "id": "E1",
+    "title": "Image cache not loading",
+    "description": "The image cache fails after startup.",
+    "summary": "Image cache not loading",
+    "stack_trace": "Traceback (most recent call last):\n  File \"cache.py\", line 4, in <module>\nValueError: boom",
+    "comments": [{"author": "watcher", "text": "This fails on the latest build."}],
+    "status": "open",
+    "priority": "P1",
+    "severity": "blocker",
+    "duplicate_of": null,
+    "url": "https://eclipse.example/E1",
+    "project": "eclipse"
+  }
+]

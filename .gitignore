@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+*.pyo
+*.db
+.env
+.venv/
+node_modules/
+/frontend/dist/
+coverage/
+.pytest_cache/
+.ruff_cache/
+.coverage
+.DS_Store
+*.log
+/data/raw/
+/chroma_db/

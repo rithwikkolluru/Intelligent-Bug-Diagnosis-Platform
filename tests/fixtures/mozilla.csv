@@ -1,0 +1,3 @@
+issue_id,title,description,summary,stack_trace,comments,status,resolution,priority,severity,duplicate_of,url,project
+M1,"Null pointer in login","The login form crashes when the user is null.","Null pointer in login","java.lang.NullPointerException\n    at com.example.Service.login(Service.java:42)","[{\"author\":\"triage\",\"text\":\"Reproduced by QA.\"}]","fixed","fixed","P2","major","M2","https://mozilla.example/M1","mozilla"
+M2,"Duplicate bug entry","This is a duplicate of login issue.","Duplicate bug entry","","[]","duplicate","duplicate","P3","minor","","https://mozilla.example/M2","mozilla"

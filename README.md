@@ -176,7 +176,7 @@ sequenceDiagram
     API-->>UI: structured diagnosis with evidence
 ```
 
-> In Milestone 1 the flow runs up to **store BugReport** and the **retrieval test path** (`POST /api/search`). The agent steps are implemented in Milestone 2.
+> The current implementation supports bug-report submission and an offline RAG index-building CLI. The diagnosis agents and an online semantic-search API are planned for later milestones.
 
 ### 5. Component Responsibilities
 
@@ -375,17 +375,25 @@ Safeguards:
 
 ---
 
-## API Endpoints (planned)
+## API Endpoints
+
+### Implemented
 
 | Method | Endpoint | Description |
 |---|---|---|
-| `POST` | `/api/bugs` | Submit a bug report (pasted text) |
+| `POST` | `/api/bugs` | Submit a pasted bug report |
 | `POST` | `/api/bugs/upload` | Submit a bug report file |
 | `GET` | `/api/bugs/{bug_id}` | Retrieve a stored bug report |
-| `POST` | `/api/search` | Semantic search over the knowledge base |
-| `POST` | `/api/diagnose/{bug_id}` | Run the diagnosis workflow (Milestone 2) |
-| `GET` | `/api/diagnoses/{diagnosis_id}` | Retrieve a diagnosis (Milestone 2) |
+| `GET` | `/api/bugs` | List recent bug reports |
 | `GET` | `/health` | Health check |
+
+### Planned
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/api/search` | Semantic search over the knowledge base |
+| `POST` | `/api/diagnose/{bug_id}` | Run the diagnosis workflow |
+| `GET` | `/api/diagnoses/{diagnosis_id}` | Retrieve a diagnosis |
 
 Interactive docs: `http://127.0.0.1:8000/docs` once the backend is running.
 
@@ -436,17 +444,15 @@ Update these only when the work is **finished and tested**.
 
 **Milestone 1**
 
-- [ ] M1.1 Research and technical documentation
-- [ ] M1.2 System architecture diagram
-- [ ] M1.2 Agent responsibilities and orchestration design
-- [ ] M1.2 Database schemas
-- [ ] M1.3 Bug submission API
-- [ ] M1.3 Frontend submission interface
-- [ ] M1.4 Dataset collection and analysis
-- [ ] M1.4 Cleaning and standardisation pipeline
-- [ ] M1.4 Chunking and embedding generation
-- [ ] M1.4 ChromaDB indexing
-- [ ] M1.4 Semantic retrieval testing
+- [x] M1.1 Research and technical documentation
+- [x] M1.2 System architecture and agent workflow documentation
+- [x] M1.2 Database schema documentation
+- [x] M1.3 Bug submission API and tests
+- [x] M1.3 Frontend submission interface and production build
+- [ ] M1.4 Real dataset collection and analysis
+- [x] M1.4 Cleaning, standardisation, and chunking code with unit tests
+- [ ] M1.4 Indexing real datasets in ChromaDB
+- [ ] M1.4 Semantic retrieval evaluation on real data
 
 **Later milestones:** multi-agent implementation (M2), end-to-end integration (M3), final evaluation (M4) - planned.
 

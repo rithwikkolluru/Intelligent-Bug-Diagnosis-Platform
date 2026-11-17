@@ -1,0 +1,1 @@
+{"title":"JSON Bug","summary":"A null pointer in parser","description":"Parser crashed when reading empty logs","stack_trace":"Traceback (most recent call last):\n  File \"main.py\", line 1, in <module>\nValueError: bad parse","language":"Python"}
