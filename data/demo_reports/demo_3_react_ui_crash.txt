@@ -1,0 +1,8 @@
+Uncaught TypeError: Cannot read properties of undefined (reading 'items')
+    at ProductCatalog (ProductCatalog.jsx:42:28)
+    at renderWithHooks (react-dom.development.js:16305:18)
+    at mountIndeterminateComponent (react-dom.development.js:20074:13)
+    at beginWork (react-dom.development.js:21587:16)
+Context: Client attempted to render catalog grid before GraphQL query returned data.
+secret=admin_bypass_secret_9941
+The component directly maps over props.data.items without checking if data is null or undefined during loading phase.

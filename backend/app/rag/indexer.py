@@ -47,9 +47,13 @@ class Indexer:
         return self.collection.count()
 
     def query(self, query_text: str, k: int = 5, where: dict[str, Any] | None = None) -> dict[str, Any]:
-        if self.collection is None:
-            return {"documents": [], "ids": [], "metadatas": []}
-        return self.collection.query(query_texts=[query_text], n_results=k, where=where)
+        if self.collection is None or self.get_count() == 0:
+            return {"documents": [[]], "ids": [[]], "metadatas": [[]], "distances": [[]]}
+        from app.rag.embedding import EmbeddingModel
+        model = EmbeddingModel()
+        vector = model.embed_text(query_text)
+        safe_k = min(max(1, k), self.get_count())
+        return self.collection.query(query_embeddings=[vector], n_results=safe_k, where=where)
 
     def export_jsonl(self, path: str | Path, chunks: list[dict[str, Any]]) -> None:
         path = Path(path)

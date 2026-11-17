@@ -1,0 +1,7 @@
+{
+  "title": "KeyError 'customer_tier' in stream ingestion batch worker",
+  "description": "Background Celery task crashes while processing customer profile events from Kafka. When an unauthenticated event is received without the customer_tier key, the entire batch processor fails.",
+  "stack_trace": "Traceback (most recent call last):\n  File \"/app/workers/event_processor.py\", line 104, in process_event_batch\n    tier = event['payload']['customer_tier']\nKeyError: 'customer_tier'",
+  "error_logs": "CRITICAL 2026-11-17 11:02:14,882 event_processor.py:109 - Task workers.process_event_batch[8f921-231a] failed with unhandled exception\napi_key: sk_live_99214488214aaccb9921",
+  "programming_language": "Python"
+}
