@@ -1,0 +1,3 @@
+Error: Cannot read property 'x' of undefined
+    at fn (app.js:10:5)
+    at main (index.js:3:2)

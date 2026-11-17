@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/app/service.py", line 15, in <module>
+    raise RuntimeError("bad state")
+RuntimeError: bad state

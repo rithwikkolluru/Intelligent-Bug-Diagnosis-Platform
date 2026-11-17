@@ -1,0 +1,4 @@
+java.lang.NullPointerException
+    at com.example.Service.login(Service.java:42)
+    at com.example.Controller.handle(Controller.java:18)
+Caused by: java.lang.IllegalStateException
