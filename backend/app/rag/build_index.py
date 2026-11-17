@@ -3,13 +3,13 @@ from __future__ import annotations
 import argparse
 from time import perf_counter
 
+from app.rag.chunking import chunk_records
 from app.rag.clean import clean_records
 from app.rag.config import get_settings
 from app.rag.embedding import EmbeddingModel
 from app.rag.indexer import Indexer
 from app.rag.loaders import iter_all_sources
 from app.rag.standardise import standardise_records
-from app.rag.chunking import chunk_records
 
 
 def run_pipeline(sample_size: int | None = None, *, full: bool = False, model: str | None = None, rebuild: bool = False, sources: list[str] | None = None) -> dict[str, object]:

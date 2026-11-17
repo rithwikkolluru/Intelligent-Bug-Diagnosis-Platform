@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import os
+
 from fastapi import APIRouter
+
 from app.core.config import get_settings
 
 router = APIRouter()

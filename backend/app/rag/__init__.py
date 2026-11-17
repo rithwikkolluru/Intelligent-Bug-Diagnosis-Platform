@@ -1,4 +1,4 @@
-from .clean import clean_text, clean_records
+from .clean import clean_records, clean_text
 from .config import RAGSettings, get_settings
 from .standardise import HistoricalDefect, standardise_records
 

@@ -19,6 +19,8 @@ from app.database.session import create_tables
 settings = get_settings()
 configure_logging()
 
+logger = logging.getLogger(__name__)
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -44,7 +46,7 @@ app.add_middleware(
 
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
-    logging.info("%s %s", request.method, request.url.path)
+    logger.info("%s %s", request.method, request.url.path)
     response = await call_next(request)
     return response
 
@@ -67,13 +69,13 @@ async def http_exception_handler(request: Request, exc: HTTPException):
 
 @app.exception_handler(SQLAlchemyError)
 async def sql_exception_handler(request: Request, exc: SQLAlchemyError):
-    logging.exception("Database error occurred")
+    logger.error("Database error occurred: %s", exc)
     return JSONResponse(status_code=500, content={"detail": "Database error.", "code": "DATABASE_ERROR"})
 
 
 @app.exception_handler(Exception)
 async def generic_exception_handler(request: Request, exc: Exception):
-    logging.exception("Unhandled exception while processing %s %s", request.method, request.url.path)
+    logger.exception("Unhandled exception while processing %s %s", request.method, request.url.path)
     return JSONResponse(
         status_code=500,
         content={"detail": "An unexpected error occurred.", "code": "INTERNAL_ERROR"},

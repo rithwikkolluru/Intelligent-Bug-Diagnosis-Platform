@@ -2,14 +2,28 @@ from __future__ import annotations
 
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, UploadFile, status
+from fastapi import (
+    APIRouter,
+    Depends,
+    File,
+    Form,
+    HTTPException,
+    Query,
+    UploadFile,
+    status,
+)
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.database.session import get_db
 from app.models.bug import BugReport
 from app.schemas.bug import BugCreate, BugListOut, BugOut
-from app.services.submission import SubmissionError, create_bug_record, handle_uploaded_file, validate_bug_payload
+from app.services.submission import (
+    SubmissionError,
+    create_bug_record,
+    handle_uploaded_file,
+    validate_bug_payload,
+)
 
 router = APIRouter(prefix="/api")
 

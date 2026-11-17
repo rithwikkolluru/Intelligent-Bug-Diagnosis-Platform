@@ -24,7 +24,7 @@ class RAGSettings:
     top_k: int = 5
 
     @classmethod
-    def from_env(cls) -> "RAGSettings":
+    def from_env(cls) -> RAGSettings:
         project_root = Path(os.getenv("RAG_PROJECT_ROOT", str(Path(__file__).resolve().parents[3])))
         return cls(
             project_root=project_root,

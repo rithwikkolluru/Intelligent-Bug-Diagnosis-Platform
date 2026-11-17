@@ -5,7 +5,6 @@ from typing import Any
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
-
 SEVERITY_MAP = {
     "blocker": "blocker",
     "critical": "critical",
@@ -96,7 +95,7 @@ class HistoricalDefect(BaseModel):
         return mapping.get(raw, "unknown")
 
     @model_validator(mode="after")
-    def _sync_stack_trace_flag(self) -> "HistoricalDefect":
+    def _sync_stack_trace_flag(self) -> HistoricalDefect:
         self.has_stack_trace = bool(self.stack_trace) or bool(self.has_stack_trace)
         return self
 

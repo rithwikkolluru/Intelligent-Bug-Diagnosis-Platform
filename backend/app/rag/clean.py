@@ -5,7 +5,6 @@ import re
 from collections.abc import Iterable
 from typing import Any
 
-
 HTML_TAG_RE = re.compile(r"<[^>]+>")
 WHITESPACE_RE = re.compile(r"\s+")
 EMAIL_HEADER_RE = re.compile(r"(?im)^((from|to|cc|subject|date|reply-to|sender|content-type):.*)$")

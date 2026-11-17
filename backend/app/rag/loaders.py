@@ -2,9 +2,10 @@ from __future__ import annotations
 
 import csv
 import json
+from collections.abc import Iterator
 from pathlib import Path
 from random import Random
-from typing import Any, Iterator
+from typing import Any
 
 from app.rag.config import get_settings
 

@@ -66,9 +66,9 @@ def _fallback_heuristic_diagnose(bug: BugReport, similar_defects: list[dict[str,
     # Pattern matches
     if "nullpointer" in content or "null pointer" in content or "nonetype" in content or "cannot read properties of undefined" in content or "cannot read property" in content:
         root_cause = (
-            f"Null Reference Dereference: The application attempted to access a member or method on an uninitialized "
+            "Null Reference Dereference: The application attempted to access a member or method on an uninitialized "
             f"or null reference in {lang}. In distributed workflows or async calls, this typically occurs when an entity lookup, "
-            f"deserialization step, or authentication context returns null/None without an upstream defensive guard."
+            "deserialization step, or authentication context returns null/None without an upstream defensive guard."
         )
         if "python" in lang.lower():
             code_patch = (
@@ -119,7 +119,7 @@ def _fallback_heuristic_diagnose(bug: BugReport, similar_defects: list[dict[str,
 
     elif "index" in content or "bounds" in content or "out of range" in content:
         root_cause = (
-            f"Index Out Of Bounds Exception: An array, list, or slice index exceeded the actual length of the collection "
+            "Index Out Of Bounds Exception: An array, list, or slice index exceeded the actual length of the collection "
             f"during iteration or direct index access in {lang}."
         )
         code_patch = (
@@ -142,8 +142,8 @@ def _fallback_heuristic_diagnose(bug: BugReport, similar_defects: list[dict[str,
 
     elif "timeout" in content or "connection" in content or "refused" in content:
         root_cause = (
-            f"Network / Resource Timeout: Communication with an upstream dependency timed out or was refused. "
-            f"This is commonly caused by missing socket timeout limits, unhandled connection pool exhaustion, or downstream latency."
+            "Network / Resource Timeout: Communication with an upstream dependency timed out or was refused. "
+            "This is commonly caused by missing socket timeout limits, unhandled connection pool exhaustion, or downstream latency."
         )
         code_patch = (
             "# Solution: Configure explicit timeouts with retry backoff\n"

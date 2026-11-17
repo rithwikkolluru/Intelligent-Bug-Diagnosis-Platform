@@ -13,7 +13,11 @@ from app.models.diagnosis import Diagnosis
 from app.schemas.bug import BugCreate, BugOut
 from app.schemas.diagnosis import DiagnoseRequest, DiagnosisOut, SampleBugOut
 from app.services.gemini import diagnose_bug_with_gemini
-from app.services.submission import SubmissionError, create_bug_record, validate_bug_payload
+from app.services.submission import (
+    SubmissionError,
+    create_bug_record,
+    validate_bug_payload,
+)
 
 router = APIRouter(prefix="/api")
 
