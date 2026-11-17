@@ -85,8 +85,7 @@ function UploadTab({ onSaved, onDiagnosed }) {
       setLanguage('Auto-detect');
       if (fileInputRef.current) fileInputRef.current.value = '';
     } catch (err) {
-      const detail = err.response?.data;
-      const message = typeof detail?.detail === 'string' ? detail.detail : 'Upload failed.';
+      const message = err.friendlyMessage || 'Upload failed. Please try again.';
       setError(message);
     } finally {
       setLoading(false);

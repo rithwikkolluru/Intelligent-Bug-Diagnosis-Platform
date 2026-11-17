@@ -239,18 +239,79 @@ def _normalize_list_field(val: Any) -> list[str]:
 
 
 def _clean_and_parse_json(raw_text: str) -> dict[str, Any]:
+    """Parse Gemini JSON response — robust against markdown fences and truncation."""
     text = raw_text.strip()
+
+    # Strip markdown code fences if present
     if text.startswith("```"):
         text = re.sub(r"^```(?:json)?\s*", "", text)
         text = re.sub(r"\s*```$", "", text)
         text = text.strip()
+
+    # Attempt 1: direct parse
     try:
         return json.loads(text, strict=False)
-    except Exception:
+    except json.JSONDecodeError:
+        pass
+
+    # Attempt 2: extract largest {...} block
+    try:
         match = re.search(r"\{.*\}", text, flags=re.DOTALL)
         if match:
             return json.loads(match.group(0), strict=False)
-        raise
+    except json.JSONDecodeError:
+        pass
+
+    # Attempt 3: repair truncated JSON by auto-closing open strings/brackets
+    try:
+        repaired = _repair_truncated_json(text)
+        return json.loads(repaired, strict=False)
+    except Exception:
+        pass
+
+    # Fallback: raise with context
+    raise ValueError(f"Cannot parse Gemini response as JSON (length={len(text)}): {text[:200]!r}")
+
+
+def _repair_truncated_json(text: str) -> str:
+    """Best-effort repair for truncated JSON: close open strings and brackets."""
+    # Find outermost { ... }
+    start = text.find("{")
+    if start == -1:
+        return text
+    text = text[start:]
+
+    # Count open brackets/braces; close any that are open
+    stack = []
+    in_string = False
+    escape_next = False
+    result = []
+    for ch in text:
+        result.append(ch)
+        if escape_next:
+            escape_next = False
+            continue
+        if ch == "\\":
+            escape_next = True
+            continue
+        if ch == '"' and not escape_next:
+            in_string = not in_string
+            continue
+        if in_string:
+            continue
+        if ch in "{[":
+            stack.append("}" if ch == "{" else "]")
+        elif ch in "}]":
+            if stack and stack[-1] == ch:
+                stack.pop()
+
+    # If we ended inside a string, close it
+    if in_string:
+        result.append('"')
+
+    # Close all open structures
+    result.extend(reversed(stack))
+    return "".join(result)
 
 
 async def diagnose_bug_with_gemini(bug: BugReport, api_key_override: str | None = None) -> dict[str, Any]:
@@ -313,7 +374,7 @@ Please generate an expert diagnosis in strict JSON format with the following key
         "generationConfig": {
             "responseMimeType": "application/json",
             "temperature": 0.2,
-            "maxOutputTokens": 4096,
+            "maxOutputTokens": 8192,
         },
     }
 
@@ -333,7 +394,19 @@ Please generate an expert diagnosis in strict JSON format with the following key
                 return _fallback_heuristic_diagnose(bug, similar_defects)
 
             raw_text = candidates[0].get("content", {}).get("parts", [{}])[0].get("text", "")
-            parsed = _clean_and_parse_json(raw_text)
+            if not raw_text.strip():
+                logger.warning("Gemini returned empty text. Falling back to heuristic engine.")
+                fallback = _fallback_heuristic_diagnose(bug, similar_defects)
+                fallback["model_used"] = "Heuristic Fallback (Gemini empty response)"
+                return fallback
+
+            try:
+                parsed = _clean_and_parse_json(raw_text)
+            except Exception as parse_exc:
+                logger.warning("Could not parse Gemini JSON (%s). Using heuristic fallback.", parse_exc)
+                fallback = _fallback_heuristic_diagnose(bug, similar_defects)
+                fallback["model_used"] = f"Heuristic Fallback (JSON parse error: {parse_exc.__class__.__name__})"
+                return fallback
 
             return {
                 "root_cause": _normalize_text_field(parsed.get("root_cause"), "Root cause identified by Gemini."),

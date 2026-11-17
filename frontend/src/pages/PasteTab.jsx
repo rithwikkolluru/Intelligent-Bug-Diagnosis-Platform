@@ -65,8 +65,7 @@ function PasteTab({ samples = [], onSaved, onDiagnosed }) {
         onDiagnosed?.(response.data, null);
       }
     } catch (err) {
-      const detail = err.response?.data;
-      const message = typeof detail?.detail === 'string' ? detail.detail : 'Submission failed. Please check inputs.';
+      const message = err.friendlyMessage || 'Submission failed. Please check your inputs and try again.';
       setError(message);
     } finally {
       setLoading(false);
