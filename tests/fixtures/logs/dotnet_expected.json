@@ -1,0 +1,7 @@
+{
+  "detected_format": "dotnet",
+  "exception_type": "System.NullReferenceException",
+  "failure_point_file": "C:\\Source\\Billing\\InvoiceGenerator.cs",
+  "failure_point_line": 88,
+  "is_application_code": true
+}

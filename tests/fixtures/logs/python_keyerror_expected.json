@@ -1,0 +1,7 @@
+{
+  "detected_format": "python",
+  "exception_type": "KeyError",
+  "failure_point_file": "/app/workers/event_processor.py",
+  "failure_point_line": 104,
+  "is_application_code": true
+}

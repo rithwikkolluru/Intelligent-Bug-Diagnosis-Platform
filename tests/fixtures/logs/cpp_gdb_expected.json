@@ -1,0 +1,7 @@
+{
+  "detected_format": "cpp_gdb",
+  "exception_type": "SIGSEGV",
+  "failure_point_file": "net/buffer.cpp",
+  "failure_point_line": 112,
+  "is_application_code": true
+}

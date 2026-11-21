@@ -1,0 +1,7 @@
+{
+  "detected_format": "android_logcat",
+  "exception_type": "java.lang.NullPointerException",
+  "failure_point_file": "PlaybackService.java",
+  "failure_point_line": 82,
+  "is_application_code": true
+}

@@ -1,0 +1,6 @@
+{
+  "detected_format": "javascript_firefox",
+  "exception_type": "TypeError",
+  "failure_point_file": "https://example.com/assets/bundle.js",
+  "failure_point_line": 142
+}

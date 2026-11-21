@@ -1,0 +1,7 @@
+{
+  "detected_format": "go",
+  "exception_type": "panic",
+  "failure_point_file": "/app/workers/processor.go",
+  "failure_point_line": 54,
+  "is_application_code": true
+}

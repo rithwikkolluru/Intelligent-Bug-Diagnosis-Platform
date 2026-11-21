@@ -1,0 +1,6 @@
+{
+  "detected_format": "java",
+  "exception_type": "java.lang.NullPointerException",
+  "failure_point_file": "Parser.java",
+  "failure_point_line": 42
+}

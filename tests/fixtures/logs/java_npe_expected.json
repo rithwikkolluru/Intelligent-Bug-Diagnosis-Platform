@@ -1,0 +1,8 @@
+{
+  "detected_format": "java",
+  "exception_type": "java.lang.NullPointerException",
+  "root_cause_type": "java.lang.IllegalStateException",
+  "failure_point_file": "UserCache.java",
+  "failure_point_line": 99,
+  "is_application_code": true
+}

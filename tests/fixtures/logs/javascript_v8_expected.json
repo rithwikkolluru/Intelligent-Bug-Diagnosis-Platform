@@ -1,0 +1,7 @@
+{
+  "detected_format": "javascript_v8",
+  "exception_type": "TypeError",
+  "failure_point_file": "src/components/ProductGrid.jsx",
+  "failure_point_line": 24,
+  "is_application_code": true
+}

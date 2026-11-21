@@ -1,0 +1,5 @@
+{
+  "detected_format": "generic_log",
+  "exception_type": "ConnectionRefused",
+  "has_repeated_lines": true
+}
