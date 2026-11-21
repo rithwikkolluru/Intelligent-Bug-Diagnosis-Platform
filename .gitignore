@@ -13,4 +13,6 @@ coverage/
 .DS_Store
 *.log
 /data/raw/
+/data/processed/*.parquet
 /chroma_db/
+.llm_cache/
