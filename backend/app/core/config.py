@@ -15,6 +15,22 @@ class Settings(BaseSettings):
     GEMINI_API_KEY: str | None = None
     GEMINI_MODEL: str = "gemini-2.5-flash"
 
+    # Multi-provider LLM Configuration (Milestone 2)
+    LLM_PROVIDER: str = "none"  # "groq" | "gemini" | "ollama" | "fake" | "none"
+    LLM_MODEL: str | None = None
+    GROQ_API_KEY: str | None = None
+    OLLAMA_BASE_URL: str = "http://localhost:11434"
+    LLM_TIMEOUT_S: float = 30.0
+    LLM_MAX_RETRIES: int = 3
+    LLM_TEMPERATURE: float = 0.0
+    LLM_MAX_OUTPUT_TOKENS: int = 2048
+    LLM_CACHE_DIR: str = ".llm_cache"
+    LLM_CACHE_ENABLED: bool = True
+    LLM_REQUESTS_PER_MINUTE: int = 30
+    TRIAGE_USE_RETRIEVAL: bool = False
+    TRIAGE_TOP_K_NEIGHBOURS: int = 3
+    MAX_INPUT_CHARS: int = 12000
+
     model_config = SettingsConfigDict(
         env_file=str(Path(__file__).resolve().parents[3] / ".env"),
         env_file_encoding="utf-8",
