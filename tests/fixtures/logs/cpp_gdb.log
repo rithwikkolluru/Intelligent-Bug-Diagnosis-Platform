@@ -1,0 +1,4 @@
+#0  0x00007ffff7a24c37 in __GI_raise (sig=sig@entry=6) at ../sysdeps/unix/sysv/linux/raise.c:51
+#1  0x00007ffff7a26028 in __GI_abort () at abort.c:79
+#2  0x0000000000401824 in PacketBuffer::release (this=0x604010) at net/buffer.cpp:112
+#3  0x0000000000401b92 in NetworkWorker::process (this=0x603f00) at net/worker.cpp:45

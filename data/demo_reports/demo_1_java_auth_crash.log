@@ -1,0 +1,12 @@
+2026-11-17 10:14:22.451 ERROR [http-nio-8080-exec-12] org.apache.catalina.core.ContainerBase - Servlet.service() for servlet [dispatcherServlet] in context with path [/api/v1] threw exception
+Authorization: Bearer sec-prod-token-998822341
+password=SuperSecretPassword123!
+java.lang.NullPointerException: Cannot invoke "com.example.auth.UserPrincipal.getAuthorities()" because "principal" is null
+    at com.example.auth.TokenAuthenticationFilter.doFilterInternal(TokenAuthenticationFilter.java:68)
+    at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:117)
+    at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:189)
+    at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:162)
+    at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:197)
+Caused by: java.lang.IllegalStateException: SecurityContextHolder contained null authentication object
+    at com.example.auth.TokenAuthenticationFilter.extractPrincipal(TokenAuthenticationFilter.java:82)
+    ... 4 more

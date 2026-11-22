@@ -1,0 +1,7 @@
+java.lang.NullPointerException: Cannot invoke "com.example.User.getPasswordHash()" because "user" is null
+    at com.example.service.AuthenticationService.authenticate(AuthenticationService.java:54)
+    at com.example.controller.LoginController.doLogin(LoginController.java:31)
+    at javax.servlet.http.HttpServlet.service(HttpServlet.java:628)
+Caused by: java.lang.IllegalStateException: User cache entry expired
+    at com.example.cache.UserCache.get(UserCache.java:99)
+    ... 12 more

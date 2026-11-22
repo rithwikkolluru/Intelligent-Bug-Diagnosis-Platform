@@ -1,0 +1,4 @@
+TypeError: Cannot read properties of undefined (reading 'map')
+    at ProductGrid (src/components/ProductGrid.jsx:24:19)
+    at renderWithHooks (node_modules/react-dom/cjs/react-dom.development.js:16305:18)
+    at mountIndeterminateComponent (node_modules/react-dom/cjs/react-dom.development.js:20074:13)

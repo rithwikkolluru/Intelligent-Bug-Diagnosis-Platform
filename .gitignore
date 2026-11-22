@@ -12,7 +12,11 @@ coverage/
 .coverage
 .DS_Store
 *.log
+!tests/fixtures/logs/*.log
+!data/demo_reports/*.log
+
 /data/raw/
 /data/processed/*.parquet
+!/data/processed/defects.parquet
 /chroma_db/
 .llm_cache/

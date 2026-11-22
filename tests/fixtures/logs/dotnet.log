@@ -1,0 +1,3 @@
+System.NullReferenceException: Object reference not set to an instance of an object.
+   at Billing.Services.InvoiceGenerator.CreateInvoice(Int32 customerId) in C:\Source\Billing\InvoiceGenerator.cs:line 88
+   at Billing.Controllers.PaymentController.Process(PaymentRequest request) in C:\Source\Billing\PaymentController.cs:line 42

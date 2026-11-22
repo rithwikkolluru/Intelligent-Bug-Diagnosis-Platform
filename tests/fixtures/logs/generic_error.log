@@ -1,0 +1,3 @@
+2026-11-22 10:14:02.124 ERROR [http-nio-8080-exec-1] com.example.service.AuthHandler: ConnectionRefused to downstream LDAP server
+2026-11-22 10:14:02.125 ERROR [http-nio-8080-exec-1] com.example.service.AuthHandler: ConnectionRefused to downstream LDAP server
+2026-11-22 10:14:02.126 ERROR [http-nio-8080-exec-1] com.example.service.AuthHandler: ConnectionRefused to downstream LDAP server

@@ -1,0 +1,3 @@
+java.lang.NullPointerException: &lt;init&gt; failed for resource
+    at com.example.xml.Parser.parse(Parser.java:42)
+    at com.example.App.start(App.java:10)
