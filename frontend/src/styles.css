@@ -210,6 +210,38 @@ button, input, textarea, select {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 350px;
   gap: 24px;
+  transition: grid-template-columns 0.25s ease;
+}
+
+.content-grid.sidebar-hidden {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.btn-sidebar-toggle {
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid var(--border-color);
+  color: var(--text-dim);
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-sidebar-toggle:hover {
+  background: rgba(51, 65, 85, 0.9);
+  color: var(--text-main);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.btn-sidebar-toggle.active {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.5);
+  color: #93c5fd;
 }
 
 .panel {
@@ -2338,9 +2370,285 @@ button:disabled {
   color: var(--text-main);
 }
 
-/* Scorecards Grid */
+/* Sidebar Header Improvements */
+.sidebar-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sidebar-title-group h3 {
+  margin: 0;
+}
+
+.count-pill {
+  background: rgba(59, 130, 246, 0.2);
+  color: #93c5fd;
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 999px;
+}
+
+.sidebar-btn-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-close-drawer {
+  color: var(--text-dim);
+  font-size: 0.9rem;
+}
+
+.btn-close-drawer:hover {
+  color: #f87171;
+}
+
+/* =====================================================================
+   Provider Hub & Multi-LLM Arena UI
+   ===================================================================== */
+.provider-hub-card {
+  margin-top: 14px;
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.hub-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  cursor: pointer;
+  background: rgba(30, 41, 59, 0.5);
+  border-bottom: 1px solid transparent;
+}
+
+.hub-top-bar:hover {
+  background: rgba(51, 65, 85, 0.6);
+}
+
+.hub-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hub-icon {
+  font-size: 1.25rem;
+}
+
+.hub-title-group h4 {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--text-main);
+}
+
+.hub-subtitle {
+  margin: 2px 0 0;
+  font-size: 0.76rem;
+  color: var(--text-dim);
+}
+
+.hub-toggle-btn {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #93c5fd;
+}
+
+.hub-content-expanded {
+  padding: 14px 16px;
+  border-top: 1px solid var(--border-color);
+}
+
+.provider-subtabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.btn-provider-tab {
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid var(--border-color);
+  color: var(--text-dim);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-provider-tab:hover {
+  background: rgba(51, 65, 85, 0.8);
+  color: var(--text-main);
+}
+
+.btn-provider-tab.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+.tab-badge {
+  font-size: 0.68rem;
+  padding: 1px 5px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+}
+
+.provider-input-pane {
+  background: rgba(10, 15, 29, 0.6);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+}
+
+.pane-form label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 4px;
+}
+
+.help-text {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+
+.save-btn-row {
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Council Controls Bar */
+.council-controls-bar {
+  margin-top: 14px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.model-selection-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.selection-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.models-badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.model-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid var(--border-color);
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.model-chip.selected {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.5);
+  color: #93c5fd;
+  font-weight: 600;
+}
+
+.council-source-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.source-toggle-chips {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-source-chip {
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid var(--border-color);
+  color: var(--text-dim);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.btn-source-chip.active {
+  background: rgba(59, 130, 246, 0.25);
+  border-color: rgba(59, 130, 246, 0.5);
+  color: #93c5fd;
+  font-weight: 600;
+}
+
+.council-bug-dropdown {
+  flex: 1;
+  min-width: 240px;
+}
+
+.btn-launch-council {
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  color: white;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 10px 18px;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-launch-council:hover:not(:disabled) {
+  opacity: 0.95;
+  transform: translateY(-1px);
+}
+
+.custom-defect-inputs {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+/* Scorecards Section & Flexible Grid */
 .scorecards-section {
   margin-top: 16px;
+  width: 100%;
 }
 
 .scorecards-header h3 {
@@ -2355,38 +2663,24 @@ button:disabled {
   color: var(--text-dim);
 }
 
-.scorecards-grid {
+.scorecards-flexible-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 16px;
-}
-
-@media (max-width: 1024px) {
-  .scorecards-grid {
-    grid-template-columns: 1fr;
-  }
-  .form-row-2col {
-    grid-template-columns: 1fr;
-  }
-  .diff-viewer-grid {
-    grid-template-columns: 1fr;
-  }
-  .diff-explanation-grid {
-    grid-template-columns: 1fr;
-  }
-  .keys-grid {
-    grid-template-columns: 1fr;
-  }
+  width: 100%;
+  min-width: 0;
 }
 
 .model-scorecard {
   background: rgba(15, 23, 42, 0.75);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  padding: 14px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .card-top {
@@ -2398,7 +2692,7 @@ button:disabled {
 
 .model-name-text {
   font-weight: 700;
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   color: var(--text-main);
   display: block;
 }
@@ -2478,6 +2772,7 @@ button:disabled {
   font-size: 0.8rem;
   line-height: 1.4;
   color: var(--text-main);
+  word-break: break-word;
 }
 
 .scorecard-field code {
@@ -2487,6 +2782,7 @@ button:disabled {
   border-radius: 3px;
   color: #93c5fd;
   width: fit-content;
+  word-break: break-all;
 }
 
 .fix-preview-box {

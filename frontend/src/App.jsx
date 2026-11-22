@@ -24,6 +24,7 @@ function App() {
   const [samples, setSamples] = useState([]);
   const [serverHealth, setServerHealth] = useState(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Active bug and diagnosis
   const [selectedBug, setSelectedBug] = useState(null);
@@ -145,6 +146,15 @@ function App() {
 
           <button
             type="button"
+            className={`btn-sidebar-toggle ${isSidebarOpen ? 'active' : ''}`}
+            onClick={() => setIsSidebarOpen((prev) => !prev)}
+            title="Toggle Recent Submissions Sidebar"
+          >
+            📋 {isSidebarOpen ? 'Hide Submissions' : `Recent Submissions (${recent.length})`}
+          </button>
+
+          <button
+            type="button"
             className="btn-settings"
             onClick={() => setIsSettingsOpen(true)}
             title="Configure Gemini API Key"
@@ -178,7 +188,7 @@ function App() {
       </nav>
 
       {/* Content Layout */}
-      <main className="content-grid">
+      <main className={`content-grid ${!isSidebarOpen ? 'sidebar-hidden' : 'sidebar-visible'}`}>
         {/* Primary Panel */}
         <section className="panel primary-panel">
           {activeTab === 0 && (
@@ -217,19 +227,33 @@ function App() {
         </section>
 
         {/* Secondary Sidebar Panel */}
-        <aside className="panel secondary-panel">
-          <div className="sidebar-header">
-            <h3>Recent Submissions</h3>
-            <button
-              type="button"
-              className="btn-icon"
-              onClick={loadRecent}
-              disabled={loadingRecent}
-              title="Refresh list"
-            >
-              🔄
-            </button>
-          </div>
+        {isSidebarOpen && (
+          <aside className="panel secondary-panel">
+            <div className="sidebar-header">
+              <div className="sidebar-title-group">
+                <h3>Recent Submissions</h3>
+                <span className="count-pill">{recent.length}</span>
+              </div>
+              <div className="sidebar-btn-group">
+                <button
+                  type="button"
+                  className="btn-icon"
+                  onClick={loadRecent}
+                  disabled={loadingRecent}
+                  title="Refresh list"
+                >
+                  🔄
+                </button>
+                <button
+                  type="button"
+                  className="btn-icon btn-close-drawer"
+                  onClick={() => setIsSidebarOpen(false)}
+                  title="Close sidebar to expand main workspace"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
 
           {loadingRecent ? (
             <div className="sidebar-loading">
@@ -295,6 +319,7 @@ function App() {
             </div>
           </div>
         </aside>
+        )}
       </main>
 
       {/* Settings Modal */}
