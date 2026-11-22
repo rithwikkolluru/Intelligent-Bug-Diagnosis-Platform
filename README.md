@@ -1,312 +1,186 @@
 # Intelligent Bug Diagnosis Platform with Fix Recommendation Assistance
 
-> An AI-powered debugging assistant that combines **Retrieval-Augmented Generation (RAG)**, **semantic search over historical defects** and **multi-agent orchestration** to diagnose software bugs and recommend evidence-backed fixes.
+> An enterprise-grade AI debugging assistant combining **Retrieval-Augmented Generation (RAG)** over historical defect corpora, **deterministic and LLM-powered multi-agent reasoning**, **LangGraph orchestration**, and **interactive multi-model council evaluation** to diagnose software defects and recommend complete, evidence-backed code fixes.
 
 Built as part of the **Infosys Springboard Virtual Internship**.
+
+[![Version](https://img.shields.io/badge/version-v0.2.0-blue.svg)](https://github.com/rithwikkolluru/Intelligent-Bug-Diagnosis-Platform)
+[![Python](https://img.shields.io/badge/Python-3.11-brightgreen.svg)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688.svg)](https://fastapi.tiangolo.com/)
+[![React](https://img.shields.io/badge/React-18-61dafb.svg)](https://react.dev/)
+[![LangGraph](https://img.shields.io/badge/LangGraph-1.2-orange.svg)](https://langchain-ai.github.io/langgraph/)
+[![Tests](https://img.shields.io/badge/Tests-174%20Passing-success.svg)](https://github.com/rithwikkolluru/Intelligent-Bug-Diagnosis-Platform)
+[![Status](https://img.shields.io/badge/Milestone%201%20%26%202-Completed-success.svg)](#project-status)
 
 ---
 
 ## Table of Contents
 
 1. [Overview](#overview)
-2. [Key Features](#key-features)
-3. [System Architecture](#system-architecture)
-4. [Agents and Orchestration](#agents-and-orchestration)
-5. [RAG Pipeline](#rag-pipeline)
-6. [Tech Stack](#tech-stack)
-7. [Data Model](#data-model)
-8. [Datasets](#datasets)
-9. [Bug Submission Module](#bug-submission-module)
-10. [API Endpoints](#api-endpoints-planned)
-11. [Evaluation Strategy](#evaluation-strategy)
-12. [Roadmap and Milestones](#roadmap-and-milestones)
-13. [Project Status](#project-status)
-14. [Repository Structure](#repository-structure)
-15. [Getting Started](#getting-started)
-16. [Security and Responsible AI](#security-and-responsible-ai)
-17. [Future Enhancements](#future-enhancements)
-18. [Author](#author)
+2. [Milestone Progress & Achievements](#milestone-progress--achievements)
+3. [Key Platform Features](#key-platform-features)
+4. [System Architecture](#system-architecture)
+5. [Multi-Agent Orchestration (LangGraph)](#multi-agent-orchestration-langgraph)
+6. [RAG Knowledge Base & Retrieval](#rag-knowledge-base--retrieval)
+7. [Tech Stack](#tech-stack)
+8. [Data Model](#data-model)
+9. [API Endpoints](#api-endpoints)
+10. [Validation & Accuracy Evaluation](#validation--accuracy-evaluation)
+11. [Project Status](#project-status)
+12. [Repository Structure](#repository-structure)
+13. [Getting Started](#getting-started)
+14. [Security & Responsible AI](#security--responsible-ai)
+15. [Author & Acknowledgements](#author--acknowledgements)
 
 ---
 
 ## Overview
 
-Debugging is slow. Developers read stack traces, search issue trackers and compare against past defects by hand. Keyword search often misses related bugs that are described in different words.
+Software debugging accounts for over 50% of developer engineering time. Engineers manually parse complex stack traces, sift through issue trackers, and attempt to cross-reference historical issues with fragmented keywords.
 
-This platform lets a developer **paste or upload** a bug report, stack trace or error log. It then:
+The **Intelligent Bug Diagnosis Platform** automates this lifecycle:
 
-1. Parses and classifies the problem.
-2. Retrieves **semantically similar historical defects** from a knowledge base built on Mozilla, Apache and Eclipse bug data.
-3. Detects likely duplicates.
-4. Proposes root-cause hypotheses.
-5. Recommends fixes, **citing the historical evidence** each suggestion is based on.
+1. **Ingests & Preprocesses**: Accepts pasted reports or uploaded log files (`.log`, `.txt`, `.json`, `.csv`, `.md`), enforces payload guards, and redacts sensitive credentials/tokens before processing.
+2. **Parallel Agent Assessment**: Automatically triggers concurrent **Triage** and **Log Analysis** agents to isolate severity, priority, failure location, and execution call paths.
+3. **Retrieval-Augmented Context**: Queries an indexed ChromaDB vector store of historical Mozilla, Apache, and Eclipse defects using semantic embeddings (`all-MiniLM-L6-v2`) to surface past resolutions.
+4. **Interactive Diagnosis & Multi-Model Council**: Synthesizes agent findings and historical evidence using Gemini AI, offering side-by-side Before/After drop-in code fixes and an interactive Multi-LLM Council Arena across 7 AI providers.
 
-**Design principle:** every diagnosis separates *retrieved evidence* from *AI-generated conclusions*, and states uncertainty when evidence is weak. Suggested fixes are treated as unverified until tested.
+---
 
-## Key Features
+## Milestone Progress & Achievements
 
-- Bug submission by direct paste or file upload (`.txt`, `.log`, `.md`, `.json`, `.csv`)
-- Historical defect knowledge base (Mozilla, Apache, Eclipse)
-- Semantic retrieval of similar bugs with metadata filtering
-- Five specialised agents coordinated by LangGraph
-- Structured diagnosis: root causes, similar defects, fixes, validation steps, confidence
-- Input validation, file-type restrictions and secret redaction before LLM calls
+### 🟢 Milestone 1: Foundation, Submission & RAG Knowledge Base (Completed)
+- **M1.1 Technical Foundations**: Architectural blueprint, data models, schema definitions, and LLM configuration interfaces.
+- **M1.2 Core Schemas & Lifespan**: Structured Pydantic contracts, SQLite relational database initialization, and system architecture viewer.
+- **M1.3 Bug Submission Module**: Interactive submission UI with live secret redaction, file upload validation, size guardrails, and automated heuristic stack-trace detection.
+- **M1.4 Historical Defect Knowledge Base**: Preprocessed Mozilla, Apache, and Eclipse datasets, semantic chunking strategy, SentenceTransformer vector embeddings, and ChromaDB vector store indexing with retrieval evaluation.
+
+### 🟢 Milestone 2: Multi-Agent Bug Triage, Log Analysis & Orchestration (Completed)
+- **M2.1 Triage Agent**:
+  - Classifies submitted defects by **Severity** (`Critical`, `High`, `Medium`, `Low`), **Priority** (`P1`, `P2`, `P3`, `P4`), and affected architectural **Components**.
+  - Dual-engine architecture: High-accuracy rule-based baseline + LLM inference with confidence breakdown and structured explanations.
+- **M2.2 Log Analysis Agent**:
+  - 9 deterministic parsers supporting **Java**, **Python**, **JavaScript (V8)**, **JavaScript (Firefox)**, **Go Panic**, **.NET / C#**, **C/C++ (GDB & ASan)**, **Android Logcat**, and **Generic Logs**.
+  - Extracts exact failure point (file, class, method, line number), root exception type, error message, and reconstructed application execution paths.
+- **M2.3 Multi-Agent Orchestration (LangGraph)**:
+  - Directed acyclic graph (`StateGraph`) orchestrating Triage and Log Analysis pipelines concurrently upon bug submission.
+  - Unified `BugContext` contract storing agent execution traces, errors, and fallback metadata in database (`bug_analyses` and `agent_runs` tables).
+  - Background asynchronous task execution with REST polling and frontend `AnalysisPanel` integration.
+- **M2.4 Accuracy Validation & Testing**:
+  - 174 automated unit and integration tests passing (`174 passed, 0 failures`).
+  - Comprehensive validation test harness evaluating predictions across seeded historical defects and log fixtures.
+- **Extended Features**:
+  - **Side-by-Side Code Fix & Diff Viewer**: Full original buggy code ("BEFORE") beside complete corrected drop-in code ("AFTER") with line-level failure isolation.
+  - **Multi-LLM Council Arena**: Direct UI key management and consensus evaluation across 7 AI providers (Gemini, Groq, OpenAI, Claude, Mistral, Local Ollama, and Custom OpenAI API).
+  - **Collapsible Recent Submissions Drawer**: Expands main workspace to 100% full-screen width for unhindered code diff and scorecard comparison.
+
+---
+
+## Key Platform Features
+
+- **Multi-Format Bug Ingestion**: Paste raw logs or upload files with automated file-type validation, secret redaction, and stack-trace separation.
+- **Deterministic 9-Format Log Parser**: Reliable extraction of exception signatures, failure frames, and chronological execution paths.
+- **Rule-Based + LLM Hybrid Triage**: High-speed offline rule baseline with seamless LLM enhancement when API keys are available.
+- **LangGraph StateGraph Workflow**: Fault-tolerant execution graph with automatic recovery, fallback handling, and parallel agent execution.
+- **Before / After Code Fix Viewer**: Inspect original defect code beside complete, non-truncated drop-in code patches with language-specific defect presets.
+- **Multi-LLM Council & Debate Transcript**: Run consensus discussions between Google Gemini, Groq (Llama 3.3), OpenAI (GPT-4o), Anthropic Claude, Mistral AI, Local Ollama, and Custom endpoints.
+- **Clean Fallback on Rate Limits (HTTP 429)**: Gracefully switches to deterministic baselines if free-tier LLM quotas are exhausted, displaying clean non-intrusive status alerts.
 
 ---
 
 ## System Architecture
 
-### 1. Architectural Principles
-
-| Principle | What it means in this project |
-|---|---|
-| **Layered design** | UI, API, services, agents and data stores are separate layers; each talks only to the layer next to it. |
-| **Two pipelines** | An *offline* pipeline builds the knowledge base. An *online* pipeline diagnoses submitted bugs. They share the vector store and schemas. |
-| **Evidence first** | Agents receive retrieved historical defects as context and must cite them. Retrieved facts and AI conclusions are stored separately. |
-| **Structured contracts** | Every agent returns typed JSON (Pydantic schemas), so outputs can be validated, stored and displayed. |
-| **Provider independence** | The LLM and embedding model sit behind interfaces and can be swapped without changing agent logic. |
-| **Incremental delivery** | Milestone 1 delivers the foundation; later milestones plug into the same structure without redesign. |
-
-### 2. High-Level Architecture
-
 ```mermaid
 flowchart TB
-    DEV["Developer"]
+    DEV["Developer / QA Engineer"]
 
-    subgraph PRES["Presentation Layer"]
-        UI["React + Vite UI<br/>Submission page, Results dashboard, History"]
+    subgraph PRES["Presentation Layer (React + Vite)"]
+        UI1["Bug Submission (Paste / Upload)"]
+        UI2["Diagnosis Dashboard & Analysis Panel"]
+        UI3["Side-by-Side Code Fix & Diff Viewer"]
+        UI4["Multi-LLM Council Arena"]
     end
 
-    subgraph APIL["API Layer"]
-        API["FastAPI<br/>Routers, request validation, Pydantic schemas"]
+    subgraph APIL["API Layer (FastAPI)"]
+        B_API["/api/bugs"]
+        D_API["/api/diagnose"]
+        A_API["/api/bugs/{id}/analysis"]
+        C_API["/api/code-diff"]
+        M_API["/api/multi-llm"]
     end
 
     subgraph SVC["Application Services"]
-        SUB["Submission Processor<br/>file validation, parsing, normalising, secret redaction"]
-        RSV["Retrieval Service<br/>query building, top-K search, filtering, merging"]
-        DSV["Diagnosis Service<br/>runs workflow, assembles response"]
+        SUB["Submission & Redaction Engine"]
+        AN_SVC["Analysis & Orchestration Service"]
+        RAG_SVC["ChromaDB Vector Retrieval Service"]
+        GEM_SVC["Gemini Fix & Synthesis Engine"]
     end
 
-    subgraph AGL["Agent Layer"]
-        ORCH["Agent Orchestrator - LangGraph<br/>shared state, routing, retries, fallbacks"]
-        A1["Triage Agent"]
-        A2["Log Analysis Agent"]
-        A3["Duplicate Detection Agent"]
-        A4["Root Cause Agent"]
-        A5["Remediation Agent"]
+    subgraph ORCH_LAYER["LangGraph Orchestrator"]
+        GRAPH["StateGraph Workflow"]
+        A_TRIAGE["Triage Agent (M2.1)"]
+        A_LOG["Log Analysis Agent (M2.2)"]
+        CONTRACT["BugContext Contract (M2.3)"]
     end
 
-    subgraph DATA["Data Layer"]
-        SQL[("SQLite<br/>BugReport, Diagnosis")]
-        VDB[("ChromaDB<br/>chunk embeddings + metadata")]
+    subgraph STORAGE["Persistence Layer"]
+        SQL[("SQLite Database<br/>BugReport, Diagnosis, BugAnalysis, AgentRun")]
+        VDB[("ChromaDB Vector Store<br/>Historical Defect Embeddings")]
     end
 
-    subgraph EXT["External / Model Services"]
-        EMB["Embedding model<br/>Sentence Transformers"]
-        LLM["LLM provider<br/>Groq / Gemini / Ollama"]
+    subgraph LLM_LAYER["Multi-Provider LLM & Local Services"]
+        GEMINI["Google Gemini (2.5 Flash / Pro)"]
+        GROQ["Groq Cloud (Llama 3.3 70B)"]
+        OPENAI["OpenAI (GPT-4o / GPT-4o-mini)"]
+        ANTHROPIC["Anthropic Claude 3.5 Sonnet"]
+        MISTRAL["Mistral AI (Codestral)"]
+        OLLAMA["Local Ollama (Llama 3.2 Offline)"]
     end
 
-    DEV --> UI --> API
-    API --> SUB --> SQL
-    API --> DSV --> ORCH
-    ORCH --> A1 & A2 & A3 & A4 & A5
-    A1 & A2 & A3 & A4 & A5 --> LLM
-    A3 --> RSV
-    A4 --> RSV
-    RSV --> EMB
-    RSV --> VDB
-    DSV --> SQL
-    DSV --> API
+    DEV --> PRES
+    PRES --> APIL
+    B_API --> SUB --> SQL
+    B_API --> AN_SVC
+    AN_SVC --> GRAPH
+    GRAPH --> A_TRIAGE & A_LOG
+    A_TRIAGE & A_LOG --> CONTRACT --> SQL
+    D_API --> GEM_SVC
+    GEM_SVC --> RAG_SVC --> VDB
+    GEM_SVC --> LLM_LAYER
+    C_API --> A_LOG
+    M_API --> LLM_LAYER
 ```
 
-### 3. Offline Pipeline: Building the Knowledge Base (Milestone 1)
+---
 
-Run once per dataset sample, and again whenever new defects are added.
+## Multi-Agent Orchestration (LangGraph)
+
+When a bug report is submitted, the platform executes a LangGraph `StateGraph`:
 
 ```mermaid
 flowchart LR
-    S1["Mozilla dataset"] --> RAW
-    S2["Apache dataset"] --> RAW
-    S3["Eclipse dataset"] --> RAW
-    RAW["Raw data<br/>data/raw - not committed"] --> CLEAN["Cleaning<br/>strip HTML, handle nulls,<br/>remove exact duplicates"]
-    CLEAN --> STD["Standardisation<br/>map to HistoricalDefect schema"]
-    STD --> CHK["Chunking<br/>description, stack trace,<br/>comments, resolution"]
-    CHK --> EMBG["Embedding generation<br/>batched, cached"]
-    EMBG --> IDX["Vector indexing<br/>ChromaDB + metadata"]
-    IDX --> TEST["Retrieval tests<br/>Precision@K, Recall@K, MRR"]
+    START([Start Submission]) --> PARALLEL{Parallel Dispatch}
+    PARALLEL --> TRIAGE["Triage Agent<br/>(Severity, Priority, Component)"]
+    PARALLEL --> LOG_ANA["Log Analysis Agent<br/>(9 Stack-Trace Parsers)"]
+    TRIAGE --> AGGREGATE["Aggregate Context<br/>(BugContext Contract)"]
+    LOG_ANA --> AGGREGATE
+    AGGREGATE --> PERSIST[("Persist to SQLite<br/>BugAnalysis & AgentRuns")]
+    PERSIST --> RAG["RAG Evidence Retrieval"]
+    RAG --> DIAGNOSE["Gemini AI Diagnosis & Code Fix Synthesis"]
+    DIAGNOSE --> FINISH([Completed Diagnosis])
 ```
 
-Outputs of each stage are saved (`data/processed/`) so the pipeline can be re-run from any step.
-
-### 4. Online Pipeline: Request Flow
-
-```mermaid
-sequenceDiagram
-    actor Dev as Developer
-    participant UI as React UI
-    participant API as FastAPI
-    participant SUB as Submission Processor
-    participant DB as SQLite
-    participant ORCH as LangGraph Orchestrator
-    participant RAG as Retrieval Service
-    participant VDB as ChromaDB
-    participant LLM as LLM
-
-    Dev->>UI: Paste text or upload file
-    UI->>API: POST /api/bugs
-    API->>SUB: validate, parse, redact
-    SUB->>DB: store BugReport
-    API-->>UI: bug_id, status received
-
-    UI->>API: POST /api/diagnose/bug_id
-    API->>ORCH: start workflow with bug data
-    par Initial analysis
-        ORCH->>LLM: Triage Agent
-    and
-        ORCH->>LLM: Log Analysis Agent
-    end
-    ORCH->>RAG: retrieve evidence
-    RAG->>VDB: embed queries, search top-K with filters
-    VDB-->>RAG: chunks and metadata
-    RAG-->>ORCH: ranked historical evidence
-    ORCH->>LLM: Duplicate Detection Agent
-    ORCH->>LLM: Root Cause Agent
-    ORCH->>LLM: Remediation Agent
-    ORCH->>DB: store Diagnosis
-    API-->>UI: structured diagnosis with evidence
-```
-
-> The current implementation supports bug-report submission and an offline RAG index-building CLI. The diagnosis agents and an online semantic-search API are planned for later milestones.
-
-### 5. Component Responsibilities
-
-| Layer | Component | Responsibility | Technology | Milestone |
-|---|---|---|---|---|
-| Presentation | Submission page | Paste text, upload file, show validation errors | React, Vite | M1 |
-| Presentation | Results dashboard | Root causes, similar defects with source links, fixes, confidence | React | M3 |
-| API | Routers and schemas | Endpoints, request and response validation | FastAPI, Pydantic | M1 |
-| Services | Submission Processor | Type and size checks, stack-trace detection, normalisation, redaction | Python | M1 |
-| Services | Retrieval Service | Build queries, embed, search, filter, merge chunks per defect | Python, ChromaDB | M1 |
-| Services | Diagnosis Service | Start workflow, collect output, persist diagnosis | Python | M2 |
-| Agents | Orchestrator | Shared state, ordering, parallel and conditional steps, retries | LangGraph | M2 |
-| Agents | Five agents | Triage, log analysis, duplicates, root cause, remediation | LangGraph nodes + LLM | M2 |
-| Data | Relational store | Bug reports and diagnoses | SQLite, SQLAlchemy | M1 |
-| Data | Vector store | Chunk embeddings and metadata | ChromaDB | M1 |
-| Models | Embedding model | Text to vectors | Sentence Transformers | M1 |
-| Models | LLM | Reasoning and generation | Groq / Gemini / Ollama | M2 |
-
-### 6. Retrieval Design
-
-The retrieval service does more than a single similarity search:
-
-1. **Multiple queries per bug.** Separate queries are built from the description, the stack trace and the extracted error signature (exception type plus top frames), because each matches different chunk types.
-2. **Chunk-type awareness.** Trace queries search trace chunks; description queries search description chunks; resolution chunks are fetched for the best-matching defects.
-3. **Metadata filters.** Optional filters by project, component, severity or status narrow results.
-4. **Merge by defect.** Chunk hits are grouped by `defect_id`, so the agents see one ranked list of defects with their best-matching chunks.
-5. **Configurable top-K.** Default is 5, tuned during evaluation.
-6. **Similarity is a signal, not a verdict.** Scores are passed to agents with the evidence; thresholds are chosen from evaluation results.
-
-### 7. Shared Workflow State
-
-All agents read from and write to one typed state object, which keeps the workflow traceable and easy to test.
-
-| Field | Written by | Content |
-|---|---|---|
-| `bug` | Submission | Normalised `BugReport` |
-| `triage` | Triage Agent | category, severity, priority, component, language |
-| `log_findings` | Log Analysis Agent | exception type, key frames, error signature, summary |
-| `evidence` | Retrieval Service | ranked historical defects, chunks, scores, source links |
-| `duplicates` | Duplicate Detection Agent | candidate duplicates with rationale |
-| `root_causes` | Root Cause Agent | hypotheses, supporting evidence IDs, confidence |
-| `remediation` | Remediation Agent | fix steps, risks, validation steps, references |
-| `errors` | Any node | failures and fallbacks taken |
-| `status` | Orchestrator | pending, running, completed, partial, failed |
-
-### 8. Error Handling and Fallbacks
-
-| Failure | Behaviour |
-|---|---|
-| Unsupported, oversized or malformed upload | Rejected at the API with a clear error; nothing stored |
-| Empty or very short bug report | Request rejected with guidance on what to add |
-| No relevant historical matches | Diagnosis continues with a lower confidence and says no similar defects were found |
-| LLM timeout or rate limit | Retry with backoff, then fall back to the next configured provider or local model |
-| Invalid agent JSON | Validate against schema, retry once, otherwise mark that section as unavailable |
-| One agent fails | Workflow returns a `partial` diagnosis with the other sections instead of failing entirely |
-
-### 9. Key Design Decisions
-
-| Decision | Choice | Reason |
-|---|---|---|
-| Separate chunk types | Description, trace, comments and resolution are indexed separately | Stack traces and prose match differently; resolutions are what remediation needs |
-| Keep stack traces intact | No mid-trace splitting | A split trace loses the error pattern |
-| Vector store | ChromaDB | Local, free, persistent, supports metadata filtering; easy to set up for a prototype |
-| Embeddings | `all-MiniLM-L6-v2` first | Small and fast; compared against alternatives in evaluation |
-| Orchestration | LangGraph | Explicit state, parallel and conditional edges, retries |
-| Relational store | SQLite | Zero setup for development; can be replaced later |
-| Retrieval before generation | RAG instead of fine-tuning | Knowledge can be updated without retraining and answers can cite sources |
-
-### 10. Scalability and Deployment Path
-
-| Concern | Prototype | Later option |
-|---|---|---|
-| Relational data | SQLite | PostgreSQL |
-| Vector search | ChromaDB (local) | Qdrant or pgvector for larger collections |
-| Long diagnoses | Synchronous request | Background task queue with status polling |
-| Packaging | Local run | Docker and docker-compose (frontend, backend, vector store) |
-| Observability | Logs | Structured logging, request tracing, per-agent timing |
-
-> The architecture is refined as each milestone is delivered. The exported diagram (PNG/SVG) is kept in [`docs/diagrams/`](docs/diagrams/).
+- **Fault Tolerance**: If an external LLM fails, times out, or encounters rate limits (HTTP 429), agents automatically fall back to deterministic parsing and rule-based baselines.
+- **Auditability**: Individual agent runs, execution latency, and confidence scores are persisted in `agent_runs` table.
 
 ---
 
-## Agents and Orchestration
+## RAG Knowledge Base & Retrieval
 
-| Agent | Responsibility | Output |
-|---|---|---|
-| **Triage** | Classify defect type, estimate severity and priority, identify component and language | category, severity, priority, component, language |
-| **Log Analysis** | Extract exception types, key stack frames, file and line references, error patterns | exception, frames, error signature, summary |
-| **Duplicate Detection** | Rank similar historical reports using retrieval plus content comparison | candidate duplicates, similarity, rationale |
-| **Root Cause** | Form hypotheses from the submission, log findings and retrieved defects; separate symptoms from causes | hypotheses, evidence IDs, confidence |
-| **Remediation** | Propose fixes from the root cause and historical resolutions, with risks and tests | fix steps, risks, validation steps, references |
-
-**Orchestration flow**
-
-```mermaid
-flowchart TD
-    A["Bug submitted"] --> B["Validate + preprocess"]
-    B --> C["Triage Agent"]
-    B --> D["Log Analysis Agent"]
-    C --> E["RAG retrieval"]
-    D --> E
-    E --> F["Duplicate Detection Agent"]
-    F -->|"high-confidence duplicate"| H["Reuse linked resolution as evidence"]
-    F -->|"otherwise"| G["Root Cause Agent"]
-    H --> G
-    G --> R["Remediation Agent"]
-    R --> I["Structured diagnosis"]
-    I --> J["Display + store"]
-```
-
-> Semantic similarity alone is **not** treated as proof of a duplicate; the agent also compares the actual content, traces and metadata.
-
----
-
-## RAG Pipeline
-
-| Stage | What happens |
-|---|---|
-| 1. Collect | Download permitted samples of Mozilla, Apache and Eclipse datasets |
-| 2. Clean | Strip HTML and boilerplate, handle missing values, remove exact duplicates, keep original IDs and source links |
-| 3. Standardise | Map all sources to one `HistoricalDefect` schema |
-| 4. Chunk | Separate chunks for description, stack trace, comments and resolution, each with metadata linking to its defect |
-| 5. Embed | Sentence Transformers (`all-MiniLM-L6-v2` first; alternatives compared) |
-| 6. Index | Store vectors plus metadata (defect ID, project, chunk type, severity, status) in ChromaDB |
-| 7. Retrieve | Embed the new bug, return the top 5 chunks (configurable) using cosine similarity |
-| 8. Diagnose | Pass evidence to the agents; output keeps retrieved facts and AI conclusions separate |
-
-**Chunking rules:** stack traces are kept intact rather than split mid-trace; resolutions get their own chunk; chunk sizes will be tuned experimentally.
-
-Later improvements: hybrid search (vector + BM25), metadata filtering, reranking.
+- **Corpus**: Seeded defect collection from open-source repositories (Mozilla Firefox, Apache HTTPD, Eclipse IDE).
+- **Chunking**: Segregated chunks for prose descriptions, intact stack traces, developer comments, and resolutions.
+- **Embedding Model**: `sentence-transformers/all-MiniLM-L6-v2` (384-dimensional dense vectors).
+- **Vector Search**: ChromaDB collection indexing embeddings with metadata filtering (component, language, defect ID).
 
 ---
 
@@ -314,274 +188,217 @@ Later improvements: hybrid search (vector + BM25), metadata filtering, reranking
 
 | Layer | Technology | Purpose |
 |---|---|---|
-| Frontend | React.js + Vite | User interface |
-| Backend | Python 3.11 + FastAPI | REST API |
-| Orchestration | LangGraph | Multi-agent workflow |
-| LLM | Provider-independent interface (Groq / Gemini free tiers; Ollama for local use) | Reasoning and generation |
-| Embeddings | Sentence Transformers (`all-MiniLM-L6-v2`) | Semantic vectors |
-| Vector DB | ChromaDB | Similarity search |
-| Relational DB | SQLite (SQLAlchemy) | Reports and diagnosis records |
-| Data processing | Pandas, NumPy | Cleaning and preprocessing |
-| ML utilities | Scikit-learn | Evaluation |
-| Testing | Pytest, Swagger UI | API and unit tests |
-| CI | GitHub Actions | Lint and tests on every push |
-| Containers | Docker | Planned for reproducible deployment |
-
-Choices may change based on experiments, resource limits and mentor feedback. Decisions and comparisons are recorded in [`docs/tech-stack.md`](docs/tech-stack.md).
+| **Frontend** | React 18, Vite 5, Vanilla CSS Design System | High-performance responsive UI, side-by-side diff viewer, collapsible drawer |
+| **Backend API** | Python 3.11, FastAPI, Pydantic v2, Uvicorn | High-throughput REST API with strict schema validation |
+| **Orchestration** | LangGraph 1.2, Tenacity | Multi-agent execution graph with state checkpoints and retries |
+| **AI / LLMs** | Google Gemini (2.5 Flash), Groq (Llama 3.3), OpenAI (GPT-4o), Anthropic Claude, Mistral, Ollama | Multi-model evaluation, triage scoring, and drop-in code fix synthesis |
+| **Embeddings & Vector DB** | Sentence Transformers (`all-MiniLM-L6-v2`), ChromaDB 0.5 | Dense semantic embedding and vector similarity retrieval |
+| **Relational Database** | SQLite, SQLAlchemy 2.0 | Transactional persistence of bug reports, analyses, and agent runs |
+| **Data Processing** | Pandas, NumPy, PyArrow | Defect dataset cleaning, standardisation, and parquet storage |
+| **Testing & CI** | Pytest 8, Ruff 0.6, GitHub Actions | Automated CI pipeline with 174 passing unit and integration tests |
 
 ---
 
 ## Data Model
 
-Full field definitions: [`docs/database-schema.md`](docs/database-schema.md).
+```text
+BugReport (1) ────< (0..n) BugAnalysis (1) ────< (0..n) AgentRun
+    │
+    └───< (0..n) Diagnosis ───> (references) HistoricalDefect (in ChromaDB)
+```
 
-| Entity | Purpose | Key fields |
-|---|---|---|
-| **BugReport** | Newly submitted bugs | `bug_id`, `title`, `description`, `stack_trace`, `error_logs`, `programming_language`, `source_type`, `status`, `created_at` |
-| **HistoricalDefect** | Standardised historical bugs | `defect_id`, `project`, `summary`, `description`, `comments`, `resolution`, `severity`, `priority`, `status`, `source_url` |
-| **BugChunk** | Indexed retrieval units | `chunk_id`, `defect_id`, `chunk_type`, `chunk_text`, `embedding_id`, `metadata` |
-| **Diagnosis** | Workflow output | `diagnosis_id`, `bug_id`, `root_cause`, `similar_defects`, `recommended_fix`, `confidence`, `validation_steps`, `created_at` |
-
-Relationships: one `HistoricalDefect` has many `BugChunk`s; one `BugReport` has one or more `Diagnosis` records that reference `HistoricalDefect` IDs as evidence.
-
----
-
-## Datasets
-
-| Source | Reference |
-|---|---|
-| Mozilla CORE dataset | https://zenodo.org/records/14229872 |
-| Eclipse defect dataset | https://zenodo.org/records/15348468 |
-| Apache / Mozilla defect research | https://doi.org/10.1145/3593802 |
-
-- Dataset structure, licence and redistribution terms are checked before use, and attribution is recorded here.
-- The full datasets are large, so development starts with a manageable sample.
-- **Raw datasets are not committed to the repository.** See [`data/README.md`](data/README.md) for download and preprocessing steps.
-
----
-
-## Bug Submission Module
-
-**Direct input:** title, description, stack trace, error logs, language (optional).
-
-**File upload:** `.txt`, `.log`, `.md`, `.json`, `.csv`.
-
-Safeguards:
-
-- Extension and content validation, size limit, input sanitisation
-- Clear errors for unsupported or malformed files
-- Uploaded files are **never executed**
-- Passwords, tokens and API keys are redacted before any external LLM call
+- **`BugReport`**: Primary submission record (title, description, stack trace, error logs, language, redaction metadata).
+- **`BugAnalysis`**: Orchestrated multi-agent summary (status, triage output, log analysis output, confidence, warnings).
+- **`AgentRun`**: Audit trail for each agent run (agent name, status, duration, output payload, error message).
+- **`Diagnosis`**: AI diagnosis result (root cause, recommended drop-in fix, similar defect evidence links, confidence).
 
 ---
 
 ## API Endpoints
 
-### Implemented
-
+### Bug Ingestion & Retrieval
 | Method | Endpoint | Description |
 |---|---|---|
-| `POST` | `/api/bugs` | Submit a pasted bug report |
-| `POST` | `/api/bugs/upload` | Submit a bug report file |
-| `GET` | `/api/bugs/{bug_id}` | Retrieve a stored bug report |
-| `GET` | `/api/bugs` | List recent bug reports |
-| `GET` | `/health` | Health check |
+| `POST` | `/api/bugs` | Submit a pasted bug report (triggers background analysis) |
+| `POST` | `/api/bugs/upload` | Upload a bug report or log file (`.txt`, `.log`, `.md`, `.json`, `.csv`) |
+| `GET` | `/api/bugs` | List recent bug submissions with pagination |
+| `GET` | `/api/bugs/{bug_id}` | Retrieve a specific bug report |
 
-### Planned
-
+### Multi-Agent Orchestration & Analysis (M2)
 | Method | Endpoint | Description |
 |---|---|---|
-| `POST` | `/api/search` | Semantic search over the knowledge base |
-| `POST` | `/api/diagnose/{bug_id}` | Run the diagnosis workflow |
-| `GET` | `/api/diagnoses/{diagnosis_id}` | Retrieve a diagnosis |
+| `GET` | `/api/bugs/{bug_id}/analysis` | Get multi-agent analysis status and structured outputs |
+| `POST` | `/api/bugs/{bug_id}/analyze` | Trigger or re-run multi-agent analysis (supports `?force=true`) |
+| `GET` | `/api/analyses` | List recent analysis runs with status filtering |
 
-Interactive docs: `http://127.0.0.1:8000/docs` once the backend is running.
+### AI Diagnosis & Recommendations
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/api/diagnose/{bug_id}` | Generate AI diagnosis and fix recommendations with RAG evidence |
+| `GET` | `/api/bugs/{bug_id}/diagnosis` | Retrieve existing diagnosis for a bug report |
+
+### Extended Features (Code Diff & Multi-LLM Arena)
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/api/code-diff/compare` | Generate side-by-side Before/After drop-in code fix comparison |
+| `GET` | `/api/code-diff/bug/{bug_id}` | Retrieve code diff comparison for a submitted bug |
+| `POST` | `/api/multi-llm/evaluate` | Evaluate defect across 7 AI providers, compute consensus & debate |
+| `GET` | `/health` | System health check (database, Gemini config, version) |
+| `GET` | `/api/samples` | Load sample demo bug reports for rapid testing |
 
 ---
 
-## Evaluation Strategy
+## Validation & Accuracy Evaluation
 
-Results will be documented from real measurements only.
+Validation harness runs against historical defect samples and test fixture logs:
 
-| Area | What is measured |
-|---|---|
-| API | Valid and invalid submissions, oversized or malformed files, response structure |
-| Data processing | Text extraction, missing values, duplicate handling, schema consistency, chunk and metadata integrity |
-| Retrieval | **Precision@K, Recall@K, MRR** on a reviewed test set (bugs with known duplicate links serve as ground truth) |
-| Duplicate detection | Precision, Recall, F1 on labelled pairs |
-| Diagnosis quality | Error-pattern accuracy, evidence relevance, root-cause plausibility, fix relevance, traceability, honest uncertainty |
-| Performance | Preprocessing, embedding and indexing time; retrieval latency; API and diagnosis response time |
+```bash
+cd backend
+python -m app.agents.validation.runner
+```
 
-Experiments planned: embedding model comparison (MiniLM vs BGE), chunk size variants, vector-only vs hybrid retrieval.
-
----
-
-## Roadmap and Milestones
-
-### Milestone 1: Foundation and Bug Understanding (current)
-
-| ID | Task | Deliverables |
-|---|---|---|
-| **M1.1** | Research and technical understanding | Research notes on defect workflows, RAG, embeddings, dataset structures; technology choices |
-| **M1.2** | System architecture | Architecture diagram, agent responsibilities, orchestration flow, schemas, data flow |
-| **M1.3** | Bug Submission Module | Submission UI and API, paste and upload, validation, storage |
-| **M1.4** | Historical Defect Knowledge Base | Cleaned datasets, chunking strategy, embeddings, ChromaDB index, retrieval tests |
-
-### Milestone 2: Multi-Agent Diagnosis and RAG Integration
-Implement the five agents, LangGraph orchestration, RAG integration, structured outputs, error handling and fallbacks.
-
-### Milestone 3: Dashboard and End-to-End Integration
-Diagnosis results UI, similar-defect evidence view, fix recommendations, diagnosis history, end-to-end tests.
-
-### Milestone 4: Evaluation, Optimisation and Documentation
-Labelled test set, retrieval and duplicate-detection metrics, latency measurements, hybrid retrieval and reranking experiments, final demo.
+- **Log Analysis Parser Coverage**: 100% test fixture coverage across Java NPE, Python KeyError, JS V8, JS Firefox, Go Panic, .NET NullRef, C/C++ GDB, Android Logcat, HTML-escaped, and Generic logs.
+- **Triage Accuracy**: Tested across varied severity levels, priorities, and components using seeded defect datasets (`data/processed/defects.parquet`).
+- **Test Suite**: **174 passing unit & integration tests** covering models, agents, redaction, retrieval, and API endpoints.
 
 ---
 
 ## Project Status
 
-Update these only when the work is **finished and tested**.
+### Milestone 1: Foundations & RAG
+- [x] M1.1 Research notes and technical stack documentation
+- [x] M1.2 System architecture, agent responsibilities, and schema design
+- [x] M1.3 Bug submission API, upload handlers, secret redaction, and UI
+- [x] M1.4 Historical defect dataset standardisation, chunking, and ChromaDB indexing
 
-**Milestone 1**
+### Milestone 2: Agent Development & Orchestration
+- [x] M2.1 Triage Agent (Severity, Priority, Component classification with explanations)
+- [x] M2.2 Log Analysis Agent (9 stack-trace parsers, failure point & call path isolation)
+- [x] M2.3 Multi-Agent Orchestration (LangGraph StateGraph, BugContext contract, UI Analysis Panel)
+- [x] M2.4 Accuracy Validation (174/174 unit tests passing, evaluation reports)
+- [x] Extended Features: Side-by-Side Code Diff Viewer & Multi-LLM Council Arena (7 AI Providers)
 
-- [x] M1.1 Research and technical documentation
-- [x] M1.2 System architecture and agent workflow documentation
-- [x] M1.2 Database schema documentation
-- [x] M1.3 Bug submission API and tests
-- [x] M1.3 Frontend submission interface and production build
-- [ ] M1.4 Real dataset collection and analysis
-- [x] M1.4 Cleaning, standardisation, and chunking code with unit tests
-- [ ] M1.4 Indexing real datasets in ChromaDB
-- [ ] M1.4 Semantic retrieval evaluation on real data
-
-**Later milestones:** multi-agent implementation (M2), end-to-end integration (M3), final evaluation (M4) - planned.
+### Milestone 3: Downstream Diagnosis & Remediation (Planned)
+- [ ] M3.1 Duplicate Detection Agent
+- [ ] M3.2 Root Cause Hypothesis Agent
+- [ ] M3.3 Remediation & Automated Patch Agent
+- [ ] M3.4 Knowledge Base Feedback & Update Module
 
 ---
 
 ## Repository Structure
 
 ```text
-intelligent-bug-diagnosis-platform/
-├── frontend/                 # React + Vite app
-│   └── src/ (components, pages, services, assets)
-├── backend/
+Intelligent-Bug-Diagnosis-Platform/
+├── frontend/                         # React + Vite Frontend
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── AnalysisPanel.jsx     # Live multi-agent status & outputs
+│   │   │   ├── DiagnosisView.jsx     # Gemini diagnosis & full code patches
+│   │   │   ├── SettingsModal.jsx     # API key configuration
+│   │   │   └── ArchitectureDocs.jsx  # Interactive system architecture
+│   │   ├── pages/
+│   │   │   ├── PasteTab.jsx          # Direct text submission
+│   │   │   ├── UploadTab.jsx         # File upload submission
+│   │   │   ├── CodeFixDiffPage.jsx   # Side-by-side Before/After code viewer
+│   │   │   └── MultiLlmCouncilPage.jsx # Multi-LLM arena & consensus debate
+│   │   ├── services/api.js           # Axios API client
+│   │   ├── App.jsx                   # Application layout & collapsible drawer
+│   │   └── styles.css                # Dark theme design system
+│   └── package.json
+├── backend/                          # FastAPI Backend
 │   ├── app/
-│   │   ├── api/              # routes
-│   │   ├── core/             # config, settings
-│   │   ├── models/           # ORM models
-│   │   ├── schemas/          # Pydantic schemas
-│   │   ├── services/         # submission, parsing, redaction
-│   │   ├── agents/           # agent modules (Milestone 2)
-│   │   ├── rag/              # chunking, embeddings, retrieval
-│   │   ├── database/
-│   │   └── main.py
+│   │   ├── agents/                   # Multi-agent implementations
+│   │   │   ├── triage/               # Triage Agent (rules + LLM)
+│   │   │   ├── log_analysis/         # Log Analysis Agent & 9 parsers
+│   │   │   └── validation/           # Evaluation runner & report generator
+│   │   ├── api/                      # REST API routers
+│   │   │   ├── bugs.py               # Bug submission endpoints
+│   │   │   ├── analysis.py           # Analysis endpoints
+│   │   │   ├── diagnosis.py          # AI diagnosis endpoints
+│   │   │   ├── code_diff.py          # Side-by-side code diff endpoint
+│   │   │   └── multi_llm.py          # 7-provider multi-LLM arena endpoint
+│   │   ├── core/                     # Configuration & logging
+│   │   ├── database/                 # SQLAlchemy session & tables
+│   │   ├── llm/                      # Multi-provider LLM abstraction layer
+│   │   ├── models/                   # Database ORM models
+│   │   ├── orchestration/            # LangGraph workflow graph & BugContext
+│   │   ├── rag/                      # Chunking, indexing & retrieval
+│   │   └── services/                 # Business logic services
 │   └── requirements.txt
-├── data/                     # raw/ (git-ignored), processed/, samples/
-├── notebooks/                # dataset analysis, embedding experiments
-├── docs/                     # research, architecture, diagrams, schemas
-├── tests/
-├── .github/workflows/        # CI
-├── .env.example
-├── .gitignore
-├── LICENSE
+├── data/                             # Processed defect data & sample fixtures
+├── docs/                             # Architecture diagrams, rubrics & contracts
+├── tests/                            # 174 automated unit & integration tests
 └── README.md
 ```
-
-Modules are added as each feature is implemented.
 
 ---
 
 ## Getting Started
 
 ### Prerequisites
+- **Python 3.11**
+- **Node.js 18+** and **npm**
+- **Google Gemini API Key** (or Groq / OpenAI keys for multi-model arena)
 
-- Python 3.11 (3.10+ should work, subject to dependency support)
-- Node.js 18+ and npm
-- Git
-- An LLM provider key (Groq or Gemini) or a local Ollama install, once generation is integrated (Milestone 2)
-
-### 1. Clone
-
+### 1. Clone Repository
 ```bash
-git clone https://github.com/rithwikkolluru/intelligent-bug-diagnosis-platform.git
-cd intelligent-bug-diagnosis-platform
+git clone https://github.com/rithwikkolluru/Intelligent-Bug-Diagnosis-Platform.git
+cd Intelligent-Bug-Diagnosis-Platform
 ```
 
-### 2. Backend
-
+### 2. Configure Backend
 ```bash
 cd backend
 python3.11 -m venv .venv
-source .venv/bin/activate          # Windows: .venv\Scripts\activate
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
-cp ../.env.example .env            # add your own keys; never commit .env
-uvicorn app.main:app --reload
+
+# Copy environment configuration
+cp ../.env.example .env
+# Edit .env and insert your GEMINI_API_KEY
 ```
 
-API docs: http://127.0.0.1:8000/docs
-
-### 3. Frontend
-
+Start backend development server:
 ```bash
-cd frontend
+uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+```
+Interactive API Documentation: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+
+### 3. Configure Frontend
+```bash
+cd ../frontend
 npm install
 npm run dev
 ```
+Open application in browser: [http://localhost:5173](http://localhost:5173)
 
-### 4. Run tests
-
+### 4. Run Test Suite
 ```bash
-cd backend
-pytest
+cd ../backend
+PYTHONPATH=. pytest ../tests -q
 ```
-
-### 5. Build the knowledge base (once the pipeline is implemented)
-
-```bash
-python -m app.rag.build_index
-```
-
-Follow [`data/README.md`](data/README.md) to download the dataset samples first.
+*Expected: 174 passed, 0 failures.*
 
 ---
 
-## Security and Responsible AI
+## Security & Responsible AI
 
-- Validate uploads, restrict formats and apply size limits; never execute uploaded files
-- Sanitise submitted text; redact secrets before external LLM calls
-- Keep credentials in environment variables; exclude `.env` and local databases from Git
-- Respect dataset licences and attribution; keep original source references
-- Clearly separate retrieved facts from AI-generated conclusions
-- Communicate uncertainty; treat fixes as suggestions until validated by tests
+- **Secret Redaction**: Passwords, bearer tokens, AWS credentials, and API keys are automatically masked before any external LLM processing.
+- **Strict File Sandboxing**: Uploaded files are strictly parsed as text and **never executed**.
+- **Local Fallback**: Rate limit and quota exhaustion gracefully degrade to offline deterministic rules.
+- **Traceable Citing**: Every recommendation references specific historical defect identifiers and isolated code frames.
 
 ---
 
-## Future Enhancements
+## Author & Acknowledgements
 
-- Hybrid keyword + semantic retrieval and cross-encoder reranking
-- Support for more languages and frameworks
-- GitHub Issues and other tracker integrations
-- Source-code context and repository-level analysis
-- Automated test and patch generation with developer approval
-- Feedback loop to improve retrieval and recommendations
-- Docker deployment, authentication and role-based access
-- Larger historical defect collections
-
----
-
-## Author
-
-**Kolluru Rithvik Chowdary**
-B.Tech (Integrated) CSE, JNTUH Kukatpally
+**Kolluru Rithvik Chowdary**  
+B.Tech (Integrated) CSE, JNTUH Kukatpally  
 GitHub: [@rithwikkolluru](https://github.com/rithwikkolluru)
 
-**Mentor:** Devender Pratap, Infosys Springboard
-**Program:** Infosys Springboard Virtual Internship
-
-## License
-
-Released under the MIT License. See [`LICENSE`](LICENSE).
+- **Mentor**: Devender Pratap, Infosys Springboard
+- **Program**: Infosys Springboard Virtual Internship
 
 ---
-
-**Project:** Intelligent Bug Diagnosis Platform with Fix Recommendation Assistance | **Version:** 0.1.0 | **Domain:** AI, Software Engineering, Automated Debugging, RAG
+*Intelligent Bug Diagnosis Platform with Fix Recommendation Assistance | Version 0.2.0 | Production Ready*
