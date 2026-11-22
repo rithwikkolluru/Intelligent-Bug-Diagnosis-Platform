@@ -13,6 +13,8 @@ from app.api.bugs import router as bugs_router
 from app.api.diagnosis import router as diagnosis_router
 from app.api.health import router as health_router
 from app.api.analysis import router as analysis_router
+from app.api.code_diff import router as code_diff_router
+from app.api.multi_llm import router as multi_llm_router
 from app.core.config import get_settings
 from app.core.logging import configure_logging
 from app.database.session import create_tables
@@ -98,3 +100,5 @@ app.include_router(health_router)
 app.include_router(bugs_router)
 app.include_router(diagnosis_router)
 app.include_router(analysis_router)
+app.include_router(code_diff_router)
+app.include_router(multi_llm_router)

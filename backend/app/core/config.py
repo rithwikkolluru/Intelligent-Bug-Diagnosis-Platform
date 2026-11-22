@@ -19,6 +19,7 @@ class Settings(BaseSettings):
     LLM_PROVIDER: str = "none"  # "groq" | "gemini" | "ollama" | "fake" | "none"
     LLM_MODEL: str | None = None
     GROQ_API_KEY: str | None = None
+    OPENAI_API_KEY: str | None = None
     OLLAMA_BASE_URL: str = "http://localhost:11434"
     LLM_TIMEOUT_S: float = 30.0
     LLM_MAX_RETRIES: int = 3

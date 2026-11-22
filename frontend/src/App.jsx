@@ -5,8 +5,17 @@ import UploadTab from './pages/UploadTab';
 import DiagnosisView from './components/DiagnosisView';
 import ArchitectureDocs from './components/ArchitectureDocs';
 import SettingsModal from './components/SettingsModal';
+import CodeFixDiffPage from './pages/CodeFixDiffPage';
+import MultiLlmCouncilPage from './pages/MultiLlmCouncilPage';
 
-const tabs = ['Paste Bug Report', 'Upload File', 'Diagnosis Dashboard', 'Architecture & Specs'];
+const tabs = [
+  'Paste Bug Report',
+  'Upload File',
+  'Diagnosis Dashboard',
+  'Code Fix & Diff (Before/After)',
+  'Multi-LLM Council Arena',
+  'Architecture & Specs',
+];
 
 function App() {
   const [activeTab, setActiveTab] = useState(0);
@@ -157,7 +166,9 @@ function App() {
             {index === 0 && '📝 '}
             {index === 1 && '📁 '}
             {index === 2 && '⚡ '}
-            {index === 3 && '📖 '}
+            {index === 3 && '🔄 '}
+            {index === 4 && '🏛️ '}
+            {index === 5 && '📖 '}
             {tab}
             {index === 2 && selectedBug && (
               <span className="tab-pill">#{selectedBug.bug_id}</span>
@@ -194,7 +205,15 @@ function App() {
             />
           )}
 
-          {activeTab === 3 && <ArchitectureDocs />}
+          {activeTab === 3 && (
+            <CodeFixDiffPage recentBugs={recent} />
+          )}
+
+          {activeTab === 4 && (
+            <MultiLlmCouncilPage recentBugs={recent} />
+          )}
+
+          {activeTab === 5 && <ArchitectureDocs />}
         </section>
 
         {/* Secondary Sidebar Panel */}

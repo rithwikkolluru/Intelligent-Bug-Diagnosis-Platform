@@ -64,6 +64,17 @@ function FrameRow({ frame, index }) {
   );
 }
 
+function formatWarningMessage(msg) {
+  if (typeof msg !== 'string') return String(msg);
+  if (msg.includes('429') || msg.includes('rate limit') || msg.includes('RESOURCE_EXHAUSTED')) {
+    return '⚡ Gemini Free-Tier Quota Limit (HTTP 429) — Graceful Fallback Active: System automatically switched to the deterministic rule-based triage baseline. You can provide an alternate key in Settings or test across models in the Multi-LLM Arena tab.';
+  }
+  if (msg.includes('LLM_FALLBACK_SKIPPED')) {
+    return '⚡ Fallback Strategy: Deterministic rule baseline active.';
+  }
+  return msg;
+}
+
 function AnalysisPanel({ bugId }) {
   const [analysis, setAnalysis] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -320,7 +331,7 @@ function AnalysisPanel({ bugId }) {
         <div className="analysis-warnings">
           <span className="warnings-label">⚠ Warnings</span>
           <ul className="warnings-list">
-            {warnings.map((w, i) => <li key={i}>{w}</li>)}
+            {warnings.map((w, i) => <li key={i}>{formatWarningMessage(w)}</li>)}
           </ul>
         </div>
       )}
