@@ -7,7 +7,7 @@ import pytest
 
 from app.agents.base import AgentInput
 from app.agents.log_analysis.agent import LogAnalysisAgent, compute_log_confidence
-from app.agents.log_analysis.heuristics import is_application_code, unescape_log_text
+from app.agents.log_analysis.heuristics import is_application_code
 from app.agents.log_analysis.parsers import (
     AndroidLogcatParser,
     CppGdbLogParser,
@@ -18,7 +18,6 @@ from app.agents.log_analysis.parsers import (
     JavaScriptFirefoxLogParser,
     JavaScriptV8LogParser,
     PythonLogParser,
-    detect_best_parser,
 )
 from app.agents.log_analysis.schemas import (
     ConfidenceBreakdown,

@@ -13,12 +13,10 @@ from app.agents.triage.schemas import (
     TriageResult,
 )
 from app.agents.triage.vocabulary import (
-    ALL_KNOWN_COMPONENTS,
     match_component,
     normalize_component_name,
 )
 from app.llm.client import FakeLLMClient
-from app.llm.exceptions import LLMUnavailableError
 
 
 # ---------------------------------------------------------

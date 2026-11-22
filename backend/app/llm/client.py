@@ -441,6 +441,8 @@ class FakeLLMClient(LLMClient):
         self._rate_limit_countdown = raise_rate_limit_count
         self._timeout_countdown = raise_timeout_count
         self.raise_unavailable = raise_unavailable
+        # In-memory fake client uses a high-capacity rate limiter so tests don't exhaust global RPM
+        self.rate_limiter = SlidingWindowRateLimiter(requests_per_minute=10000)
 
     def _call_raw_provider(
         self,

@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 """
 Orchestration integration tests (fast — uses FakeLLM and in-memory SQLite).
 
@@ -18,28 +16,35 @@ Coverage:
 - Re-run creates attempt counter
 - Refusing double-run (conflict)
 """
+from __future__ import annotations
 
-import json
 import os
-
-import pytest
-from fastapi.testclient import TestClient
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 
 # Force inline execution and disable auto-submit for most tests
 os.environ.setdefault("ANALYSIS_EXECUTION", "inline")
 os.environ.setdefault("ANALYSIS_ON_SUBMIT", "false")  # Controlled per-test
 
-from app.agents.base import AgentInput
-from app.database.base import Base
-from app.database.session import get_db
-from app.main import app
-from app.orchestration.graph import run_analysis
-from app.schemas.bug_context import BugContext, BugSnapshot
+import pytest  # noqa: E402
+from fastapi.testclient import TestClient  # noqa: E402
+from sqlalchemy import create_engine  # noqa: E402
+from sqlalchemy.orm import sessionmaker  # noqa: E402
+from sqlalchemy.pool import StaticPool  # noqa: E402
 
-# In-memory test database
-TEST_ENGINE = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False})
+import app.models.analysis  # noqa: E402, F401
+import app.models.bug  # noqa: E402, F401
+from app.agents.base import AgentInput  # noqa: E402
+from app.database.base import Base  # noqa: E402
+from app.database.session import get_db  # noqa: E402
+from app.main import app  # noqa: E402
+from app.orchestration.graph import run_analysis  # noqa: E402
+from app.schemas.bug_context import BugContext, BugSnapshot  # noqa: E402
+
+# In-memory test database with StaticPool so all connections share the same memory DB
+TEST_ENGINE = create_engine(
+    "sqlite:///:memory:",
+    connect_args={"check_same_thread": False},
+    poolclass=StaticPool,
+)
 TestSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=TEST_ENGINE)
 
 

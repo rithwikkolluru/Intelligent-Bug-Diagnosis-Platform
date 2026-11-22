@@ -40,6 +40,9 @@ class TriageAgent(BaseAgent[TriageResult]):
     def _get_client(self) -> LLMClient | None:
         if self._llm_client is not None:
             return self._llm_client
+        provider = getattr(settings, "LLM_PROVIDER", "none") or "none"
+        if provider.lower().strip() in ("none", ""):
+            return None
         try:
             return get_llm_client()
         except LLMUnavailableError:
