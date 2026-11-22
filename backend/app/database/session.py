@@ -9,6 +9,11 @@ from sqlalchemy.pool import StaticPool
 from app.core.config import get_settings
 from app.database.base import Base
 
+# Import all models here so SQLAlchemy discovers them before create_all()
+import app.models.bug  # noqa: F401
+import app.models.diagnosis  # noqa: F401
+import app.models.analysis  # noqa: F401
+
 settings = get_settings()
 connect_args = {"check_same_thread": False} if settings.DATABASE_URL.startswith("sqlite") else {}
 engine_kwargs = {"connect_args": connect_args}

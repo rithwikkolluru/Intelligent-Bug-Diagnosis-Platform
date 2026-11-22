@@ -1,0 +1,25 @@
+Title: KeyError when processing API response in data pipeline
+
+Description:
+The data processing pipeline fails intermittently when the upstream API returns a response
+without the expected "results" key. The error occurs in the nightly ETL job approximately
+3–4 times per week. A workaround exists: manually re-triggering the failed job resolves it.
+
+Error Log:
+2024-03-15 02:14:33,891 ERROR pipeline.processor - Unhandled exception in process_batch
+Traceback (most recent call last):
+  File "/opt/pipeline/src/pipeline/processor.py", line 156, in process_batch
+    records = response["results"]
+KeyError: 'results'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/pipeline/src/pipeline/runner.py", line 89, in run_nightly
+    self.processor.process_batch(batch_id)
+  File "/opt/pipeline/src/pipeline/processor.py", line 162, in process_batch
+    raise PipelineError(f"Unexpected API response format for batch {batch_id}") from exc
+pipeline.exceptions.PipelineError: Unexpected API response format for batch 20240315_02
+
+Environment: Python 3.11, Ubuntu 22.04, nightly ETL job
+Frequency: 3-4 times per week

@@ -233,8 +233,15 @@ function App() {
                   >
                     <div className="recent-item-top">
                       <span className="recent-id">#{item.bug_id}</span>
-                      <span className={`status-pill ${item.status === 'diagnosed' ? 'pill-diagnosed' : 'pill-received'}`}>
-                        {item.status}
+                      <span className={`status-pill ${
+                        item.status === 'diagnosed' ? 'pill-diagnosed' :
+                        item.status?.startsWith('analysis_complete') ? 'pill-diagnosed' :
+                        item.status?.startsWith('analysis_partial') ? 'pill-partial' :
+                        item.status?.startsWith('analysis_failed') ? 'pill-failed' :
+                        item.status === 'analyzing' ? 'pill-analyzing' :
+                        'pill-received'
+                      }`}>
+                        {item.status?.startsWith('analysis_') ? item.status.replace('analysis_', '⚡ ') : item.status}
                       </span>
                     </div>
 

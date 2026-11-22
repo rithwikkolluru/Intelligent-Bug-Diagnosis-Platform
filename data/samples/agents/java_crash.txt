@@ -1,0 +1,20 @@
+Title: NullPointerException on startup when loading user configuration
+
+Description:
+The application crashes immediately on startup when attempting to load the user configuration
+from the database. This happens for all users on the production server since the last deployment.
+No workaround is available — the application is completely unusable.
+
+Stack Trace:
+java.lang.NullPointerException: Cannot invoke "com.example.config.UserConfig.getSettings()" because "userConfig" is null
+	at com.example.service.StartupService.loadConfiguration(StartupService.java:88)
+	at com.example.service.StartupService.initialize(StartupService.java:42)
+	at com.example.Application.main(Application.java:15)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.springframework.boot.loader.MainMethodRunner.run(MainMethodRunner.java:49)
+
+Environment: Production, Java 11, Spring Boot 2.7.3
+Severity: Critical — application is completely down

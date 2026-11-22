@@ -28,3 +28,4 @@ class BugReport(Base):
     )
 
     diagnoses = relationship("Diagnosis", back_populates="bug", cascade="all, delete-orphan")
+    analyses = relationship("BugAnalysis", back_populates="bug", cascade="all, delete-orphan")

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import AnalysisPanel from './AnalysisPanel';
 
 function DiagnosisView({ bug, diagnosis, onRefresh, loading }) {
   const [copied, setCopied] = useState(false);
@@ -275,6 +276,17 @@ function DiagnosisView({ bug, diagnosis, onRefresh, loading }) {
           {loading ? 'Refreshing…' : '🔄 Re-analyze with AI'}
         </button>
       </div>
+
+      {/* M2.3 Analysis Panel — Triage & Log Analysis Agent Results */}
+      {bug?.bug_id && (
+        <div className="section-card">
+          <div className="section-title">
+            <span className="section-icon">🤖</span>
+            <h3>Multi-Agent Analysis (M2)</h3>
+          </div>
+          <AnalysisPanel bugId={bug.bug_id} />
+        </div>
+      )}
     </div>
   );
 }

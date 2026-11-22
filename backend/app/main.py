@@ -12,6 +12,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.api.bugs import router as bugs_router
 from app.api.diagnosis import router as diagnosis_router
 from app.api.health import router as health_router
+from app.api.analysis import router as analysis_router
 from app.core.config import get_settings
 from app.core.logging import configure_logging
 from app.database.session import create_tables
@@ -26,6 +27,17 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI):
     # Initialize database tables on startup
     create_tables()
+    # Recover any stuck analyses from previous crash
+    from app.database.session import SessionLocal
+    from app.services.analysis_repo import AnalysisRepository
+    db = SessionLocal()
+    try:
+        repo = AnalysisRepository(db)
+        recovered = repo.recover_stuck()
+        if recovered:
+            logger.warning("Startup recovery: marked %d stuck analyses as failed", recovered)
+    finally:
+        db.close()
     yield
 
 
@@ -85,3 +97,4 @@ async def generic_exception_handler(request: Request, exc: Exception):
 app.include_router(health_router)
 app.include_router(bugs_router)
 app.include_router(diagnosis_router)
+app.include_router(analysis_router)

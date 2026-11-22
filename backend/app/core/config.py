@@ -31,6 +31,13 @@ class Settings(BaseSettings):
     TRIAGE_TOP_K_NEIGHBOURS: int = 3
     MAX_INPUT_CHARS: int = 12000
 
+    # Orchestration settings (Milestone 2 M2.3)
+    ANALYSIS_ON_SUBMIT: bool = True       # Auto-trigger analysis on bug submit
+    ANALYSIS_EXECUTION: str = "background"  # "background" | "inline"
+    ANALYSIS_TRIAGE_AFTER_LOG: bool = False  # Run triage after log analysis to pass log output
+    ANALYSIS_MAX_CONCURRENT: int = 4       # Max concurrent analysis jobs
+    PIPELINE_VERSION: str = "2.0.0"        # Bumped with each major orchestration change
+
     model_config = SettingsConfigDict(
         env_file=str(Path(__file__).resolve().parents[3] / ".env"),
         env_file_encoding="utf-8",

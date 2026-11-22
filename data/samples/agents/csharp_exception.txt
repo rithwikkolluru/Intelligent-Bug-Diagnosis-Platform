@@ -1,0 +1,17 @@
+Title: System.OutOfMemoryException in PDF report generator
+
+Description:
+The PDF report generator throws OutOfMemoryException when generating reports with more than
+500 pages. Reports with up to 200 pages work correctly. This is a regression introduced in
+version 3.2.0 — it worked in 3.1.5. The PDF library was upgraded as part of that release.
+
+Stack Trace:
+System.OutOfMemoryException: Exception of type 'System.OutOfMemoryException' was thrown.
+   at System.Drawing.Bitmap..ctor(Int32 width, Int32 height, PixelFormat format)
+   at ReportGenerator.PdfRenderer.RenderPage(PageContext context) in C:\src\Reports\PdfRenderer.cs:line 243
+   at ReportGenerator.PdfRenderer.GenerateDocument(ReportModel model) in C:\src\Reports\PdfRenderer.cs:line 118
+   at ReportGenerator.Services.ReportService.Generate(Guid reportId) in C:\src\Services\ReportService.cs:line 67
+   at ReportGenerator.Controllers.ReportController.Download(Guid id) in C:\src\Controllers\ReportController.cs:line 44
+
+Environment: .NET 6, Windows Server 2019, 16GB RAM
+Regression: Yes — worked in 3.1.5, broken since 3.2.0

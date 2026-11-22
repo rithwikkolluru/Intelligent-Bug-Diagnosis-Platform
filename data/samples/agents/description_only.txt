@@ -1,0 +1,22 @@
+Title: Search results show stale data after cache invalidation
+
+Description:
+After triggering a manual cache invalidation from the admin panel, the search results
+page continues to show outdated product listings for approximately 5–10 minutes.
+Users who perform a search immediately after invalidation see stale prices and inventory
+counts. A page refresh after the cache fully clears resolves the issue.
+
+This affects approximately 15% of users who search within the cache warm-up window.
+The issue is reproducible consistently in production and staging environments.
+
+Steps to Reproduce:
+1. Admin triggers cache invalidation from /admin/cache/flush
+2. User performs a product search within 5 minutes
+3. Search results show prices from before the invalidation
+
+Expected: Search results should reflect the latest database values immediately
+Actual: Stale cached values shown for up to 10 minutes
+
+Environment: Production and Staging
+Component: Search / Caching Layer
+Programming language: Python

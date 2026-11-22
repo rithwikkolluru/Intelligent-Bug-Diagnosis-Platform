@@ -4,6 +4,7 @@ from typing import Annotated
 
 from fastapi import (
     APIRouter,
+    BackgroundTasks,
     Depends,
     File,
     Form,
@@ -15,9 +16,11 @@ from fastapi import (
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.core.config import get_settings
 from app.database.session import get_db
 from app.models.bug import BugReport
 from app.schemas.bug import BugCreate, BugListOut, BugOut
+from app.services.analysis_service import run_analysis_background, run_analysis_sync
 from app.services.submission import (
     SubmissionError,
     create_bug_record,
@@ -26,24 +29,44 @@ from app.services.submission import (
 )
 
 router = APIRouter(prefix="/api")
+settings = get_settings()
 
 
 def _to_schema(record: BugReport) -> BugOut:
     return BugOut.model_validate(record)
 
 
+def _trigger_analysis(background_tasks: BackgroundTasks, db: Session, bug_id: int) -> None:
+    """Trigger analysis based on ANALYSIS_ON_SUBMIT and ANALYSIS_EXECUTION config."""
+    if not settings.ANALYSIS_ON_SUBMIT:
+        return
+    if settings.ANALYSIS_EXECUTION == "inline":
+        try:
+            run_analysis_sync(db, bug_id)
+        except Exception:
+            pass  # Analysis failures never block submission
+    else:
+        background_tasks.add_task(run_analysis_background, db, bug_id)
+
+
 @router.post("/bugs", response_model=BugOut, status_code=status.HTTP_201_CREATED)
-def create_bug(payload: BugCreate, db: Session = Depends(get_db)) -> BugOut:
+def create_bug(
+    payload: BugCreate,
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db),
+) -> BugOut:
     validated = validate_bug_payload(payload.model_dump())
     try:
         bug = create_bug_record(db, validated, source_type="paste")
     except SubmissionError as exc:
         raise HTTPException(status_code=400, detail={"detail": exc.message, "code": exc.code}) from exc
+    _trigger_analysis(background_tasks, db, bug.bug_id)
     return _to_schema(bug)
 
 
 @router.post("/bugs/upload", response_model=BugOut, status_code=status.HTTP_201_CREATED)
 def upload_bug(
+    background_tasks: BackgroundTasks,
     file: UploadFile = File(...),
     title: Annotated[str | None, Form()] = None,
     programming_language: Annotated[str | None, Form()] = None,
@@ -53,6 +76,7 @@ def upload_bug(
         bug = handle_uploaded_file(db, file, title=title, programming_language=programming_language)
     except SubmissionError as exc:
         raise HTTPException(status_code=400, detail={"detail": exc.message, "code": exc.code}) from exc
+    _trigger_analysis(background_tasks, db, bug.bug_id)
     return _to_schema(bug)
 
 
@@ -73,3 +97,4 @@ def list_bugs(
     total = db.query(BugReport).count()
     items = db.execute(select(BugReport).order_by(BugReport.created_at.desc()).limit(limit).offset(offset)).scalars().all()
     return BugListOut(items=[_to_schema(item) for item in items], total=total, limit=limit, offset=offset)
+
