@@ -6,6 +6,7 @@ from sqlalchemy import DateTime, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.base import Base
+import app.models.analysis  # noqa: F401 - Register BugAnalysis in mapper registry
 
 
 class BugReport(Base):

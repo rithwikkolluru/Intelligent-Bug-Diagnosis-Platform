@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from pydantic import field_validator
+from pydantic import field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -62,6 +62,19 @@ class Settings(BaseSettings):
         if isinstance(value, str):
             return [item.strip() for item in value.split(",") if item.strip()]
         return value
+
+    @model_validator(mode="after")
+    def auto_detect_llm_provider(self):
+        if (self.LLM_PROVIDER == "none" or not self.LLM_PROVIDER) and self.GEMINI_API_KEY:
+            self.LLM_PROVIDER = "gemini"
+        if not self.LLM_MODEL:
+            if self.LLM_PROVIDER == "gemini":
+                self.LLM_MODEL = self.GEMINI_MODEL or "gemini-2.5-flash"
+            elif self.LLM_PROVIDER == "groq":
+                self.LLM_MODEL = "llama-3.1-8b-instant"
+            elif self.LLM_PROVIDER == "ollama":
+                self.LLM_MODEL = "llama3.2"
+        return self
 
 
 settings = Settings()

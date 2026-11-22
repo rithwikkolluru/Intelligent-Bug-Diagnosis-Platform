@@ -315,25 +315,80 @@ def _repair_truncated_json(text: str) -> str:
 
 
 async def diagnose_bug_with_gemini(bug: BugReport, api_key_override: str | None = None) -> dict[str, Any]:
-    """Diagnose bug using Gemini API if key is available, else fallback smoothly."""
+    """Diagnose bug using Gemini AI, synthesizing multi-agent findings (Triage & Log Analysis) and RAG evidence."""
     settings = get_settings()
     api_key = api_key_override or settings.GEMINI_API_KEY or os.getenv("GEMINI_API_KEY")
 
     # 1. Retrieve RAG evidence
     similar_defects = retrieve_relevant_historical_defects(bug, top_k=3)
 
-    # 2. If no API key configured, use intelligent heuristic fallback
+    # 2. Run multi-agent assessments (Triage Agent & Log Analysis Agent)
+    from app.agents.base import AgentInput
+    from app.agents.log_analysis.agent import LogAnalysisAgent
+    from app.agents.triage.agent import TriageAgent
+
+    agent_input = AgentInput(
+        bug_id=bug.bug_id,
+        title=bug.title,
+        description=bug.description,
+        stack_trace=bug.stack_trace,
+        error_logs=bug.error_logs,
+        programming_language=bug.programming_language,
+    )
+
+    triage_info = ""
+    try:
+        triage_res = TriageAgent().run(agent_input)
+        if triage_res.output:
+            t = triage_res.output
+            sev_val = t.severity.value if hasattr(t.severity, "value") else str(t.severity)
+            prio_val = t.priority.value if hasattr(t.priority, "value") else str(t.priority)
+            comp_name = t.component.name if t.component else "Unknown"
+            triage_info = (
+                f"- Triage Agent Assessment:\n"
+                f"  * Severity Score: {sev_val} (Confidence: {t.confidence * 100:.0f}%)\n"
+                f"  * Priority Level: {prio_val}\n"
+                f"  * Affected Component: {comp_name}\n"
+                f"  * Triage Reasoning: {t.reasoning}\n"
+            )
+    except Exception as e:
+        logger.warning("Could not run Triage Agent during diagnosis: %s", e)
+
+    log_info = ""
+    try:
+        log_res = LogAnalysisAgent().run(agent_input)
+        if log_res.output:
+            log_out = log_res.output
+            fp = log_out.failure_point
+            fp_str = (
+                f"File: {fp.file}, Line: {fp.line}, Method: {fp.method}, Class: {fp.cls}"
+                if fp
+                else "No explicit frame isolated"
+            )
+            log_info = (
+                f"- Log Analysis Agent Findings:\n"
+                f"  * Detected Format: {log_out.detected_format}\n"
+                f"  * Exception Type: {log_out.exception_type.simple_name if log_out.exception_type else 'Unknown'}\n"
+                f"  * Error Message: {log_out.error_message or 'None'}\n"
+                f"  * Exact Failure Point: {fp_str}\n"
+                f"  * Probable Code Path: {len(log_out.code_path)} stack frames extracted\n"
+            )
+    except Exception as e:
+        logger.warning("Could not run Log Analysis Agent during diagnosis: %s", e)
+
+    # 3. If no API key configured, use intelligent heuristic fallback
     if not api_key or not api_key.strip():
         logger.info("GEMINI_API_KEY not configured. Using Heuristic Engine fallback.")
         return _fallback_heuristic_diagnose(bug, similar_defects)
 
-    # 3. Call Google Gemini API
+    # 4. Call Google Gemini API
     gemini_model = settings.GEMINI_MODEL or "gemini-2.5-flash"
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{gemini_model}:generateContent?key={api_key.strip()}"
 
     system_instruction = (
         "You are an elite Principal Software Engineer and automated bug diagnosis specialist. "
-        "Analyze the provided software bug report, stack trace, error logs, and retrieved historical defect evidence. "
+        "You collaborate with specialized AI agents: the Triage Agent and the Log Analysis Agent. "
+        "Analyze the provided software bug report, stack trace, error logs, multi-agent findings, and retrieved historical defect evidence. "
         "Output ONLY a valid JSON object matching the required schema with concrete, evidence-backed fixes."
     )
 
@@ -347,18 +402,27 @@ Bug Report Details:
 - Title: {bug.title}
 - Programming Language: {bug.programming_language or 'Unknown / Auto'}
 - Description: {bug.description}
-- Stack Trace:
+
+Stack Trace:
 {bug.stack_trace or 'None'}
-- Error Logs:
+
+Error Logs:
 {bug.error_logs or 'None'}
+
+Multi-Agent Pipeline Findings:
+{triage_info or 'No triage agent output available.'}
+{log_info or 'No log analysis output available.'}
 
 Retrieved Historical Evidence (from Mozilla/Eclipse/Apache defect database):
 {evidence_str}
 
 Please generate an expert diagnosis in strict JSON format with the following keys:
-1. "root_cause": (Detailed explanation of why this bug occurs based on trace and logs)
-2. "fix_recommendation": (Numbered step-by-step guidance on how to fix this bug)
-3. "code_patch": (Executable code snippet demonstrating the fix, with before and after comments)
+1. "root_cause": (Detailed explanation of why this bug occurs based on trace and logs. MUST include:
+   - "Exact Error Location": State explicitly the File, Class, Method, and Line number where the error occurs in the provided file/report.
+   - "Severity & Priority Assessment": State your consensus rating (Critical, Very High / High, Moderate / Average, Low) and Priority (P1 to P4) with technical urgency justification.
+   - "Technical Root Cause": The specific architectural or runtime failure mechanism.)
+2. "fix_recommendation": (Numbered step-by-step guidance and suggestions for the user to remediate the error and prevent recurrence.)
+3. "code_patch": (THE FULL, COMPLETE, DROP-IN REPLACEMENT CODE. Do NOT truncate or abbreviate with '...'. Provide the complete fixed function or class with '// BEFORE (Buggy)' and '// AFTER (Fixed)' comments explaining what was changed.)
 4. "verification_steps": (Array of strings representing test cases or verification steps to prove the fix)
 5. "duplicate_assessment": (Evaluation of whether this matches past defects and duplicate risk)
 6. "confidence_score": (Float between 0.0 and 1.0 indicating diagnosis certainty)
