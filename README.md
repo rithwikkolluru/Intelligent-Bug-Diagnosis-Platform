@@ -25,12 +25,15 @@ Built as part of the **Infosys Springboard Virtual Internship**.
 7. [Tech Stack](#tech-stack)
 8. [Data Model](#data-model)
 9. [API Endpoints](#api-endpoints)
-10. [Validation & Accuracy Evaluation](#validation--accuracy-evaluation)
-11. [Project Status](#project-status)
-12. [Repository Structure](#repository-structure)
-13. [Getting Started](#getting-started)
-14. [Security & Responsible AI](#security--responsible-ai)
-15. [Author & Acknowledgements](#author--acknowledgements)
+10. [Agile Project Management & Sprint Execution](#agile-project-management--sprint-execution)
+11. [Quality Assurance & Test Case Matrix](#quality-assurance--test-case-matrix)
+12. [Internal Defect Tracking Log](#internal-defect-tracking-log)
+13. [Validation & Accuracy Evaluation](#validation--accuracy-evaluation)
+14. [Project Status](#project-status)
+15. [Repository Structure](#repository-structure)
+16. [Getting Started](#getting-started)
+17. [Security & Responsible AI](#security--responsible-ai)
+18. [Author & Acknowledgements](#author--acknowledgements)
 
 ---
 
@@ -248,6 +251,102 @@ BugReport (1) ────< (0..n) BugAnalysis (1) ────< (0..n) AgentRun
 
 ---
 
+## Agile Project Management & Sprint Execution
+
+The platform development followed a structured **Agile/Scrum framework** divided into 4 focused bi-weekly sprints. Engineering deliverables were decomposed into user stories and prioritized using the **MoSCoW** convention (13 *Must Have*, 3 *Should Have*).
+
+> **Artifact References**:
+> - Detailed Sprint Backlog: [`docs/project-management/user-stories-and-sprint-backlog.md`](docs/project-management/user-stories-and-sprint-backlog.md)
+> - Raw CSV Export: [`.github/project-management/user-stories-and-sprint-backlog.csv`](.github/project-management/user-stories-and-sprint-backlog.csv)
+
+### Product Backlog & User Stories
+
+| Planned Sprint | Actual Sprint | US ID | User Story Description | MoSCoW | Dependency | Assignee | Status |
+|:---:|:---:|:---:|:---|:---:|:---:|:---|:---:|
+| **Sprint 1** | Sprint 1 | **US-01** | As a developer, I want the Triage Agent to classify each submitted bug as Critical, High, Medium, or Low severity so that I can quickly judge how serious it is. | Must Have | None | Kolluru Rithvik (AI/ML Developer) | **Completed** |
+| **Sprint 1** | Sprint 1 | **US-02** | As a developer, I want the Triage Agent to assign a priority based on the impact and urgency of the bug so that I know what to fix first. | Must Have | US-01 | Kolluru Rithvik (AI/ML Developer) | **Completed** |
+| **Sprint 1** | Sprint 1 | **US-03** | As a developer, I want the Triage Agent to identify the affected component/module from the bug description and technical information so that I know where to start investigating. | Must Have | US-01 | Kolluru Rithvik (AI/ML Developer) | **Completed** |
+| **Sprint 1** | Sprint 1 | **US-04** | As a developer, I want a confidence score and short reasoning in a consistent structured output so that I can trust and reuse the triage result. | Should Have | US-01, US-03 | Kolluru Rithvik (Backend Developer) | **Completed** |
+| **Sprint 2** | Sprint 2 | **US-05** | As a developer, I want the Log Analysis Agent to identify the exception type and extract the error message from stack traces and logs so that I can understand the failure quickly. | Must Have | None | Kolluru Rithvik (AI/ML Developer) | **Completed** |
+| **Sprint 2** | Sprint 2 | **US-06** | As a developer, I want the agent to identify the failure point (file, class, method, line number) and the probable affected code path so that I can locate the faulty code. | Must Have | US-05 | Kolluru Rithvik (AI/ML Developer) | **Completed** |
+| **Sprint 2** | Sprint 2 | **US-07** | As a developer, I want the agent to handle different stack-trace and log formats so that bugs from any language or tool can be analyzed. | Should Have | US-05 | Kolluru Rithvik (Backend Developer) | **Completed** |
+| **Sprint 2** | Sprint 2 | **US-08** | As a developer, I want a structured output with exception type, error message, failure point, code path, and confidence score so that other agents can consume it. | Must Have | US-06 | Kolluru Rithvik (Backend Developer) | **Completed** |
+| **Sprint 3** | Sprint 3 | **US-09** | As a developer, I want the Triage and Log Analysis agents to run automatically when a bug is submitted so that analysis starts without manual effort. | Must Have | US-04, US-08 | Kolluru Rithvik (Backend Developer) | **Completed** |
+| **Sprint 3** | Sprint 3 | **US-10** | As a developer, I want the bug description, stack trace, and logs routed to the right agents and their outputs combined into one structured bug context so that the analysis is consistent. | Must Have | US-09 | Kolluru Rithvik (Backend Developer) | **Completed** |
+| **Sprint 3** | Sprint 3 | **US-11** | As a developer, I want error handling for missing logs, invalid input, agent failures, and incomplete analysis so that the system stays reliable. | Should Have | US-09 | Kolluru Rithvik (Backend Developer) | **Completed** |
+| **Sprint 3** | Sprint 3 | **US-12** | As a developer, I want the combined agent outputs to be passed as context to downstream agents so that Milestone 3 agents can build on them. | Must Have | US-10 | Kolluru Rithvik (AI/ML Developer) | **Completed** |
+| **Sprint 4** | Sprint 4 | **US-13** | As a developer, I want a test set built from the seeded defect dataset (description-only, with stack trace, logs-only, messy logs) so that the agents are tested on varied inputs. | Must Have | US-12 | Kolluru Rithvik (QA Engineer) | **Completed** |
+| **Sprint 4** | Sprint 4 | **US-14** | As a developer, I want to measure Triage Agent accuracy for severity, priority, and affected component so that I know how reliable it is. | Must Have | US-13 | Kolluru Rithvik (QA Engineer) | **Completed** |
+| **Sprint 4** | Sprint 4 | **US-15** | As a developer, I want to measure Log Analysis Agent accuracy for exception type, failure point, and code path so that I know how reliable it is. | Must Have | US-13 | Kolluru Rithvik (QA Engineer) | **Completed** |
+| **Sprint 4** | Sprint 4 | **US-16** | As a developer, I want incorrect predictions recorded and analyzed, and prompts, rules, and parsing improved so that agent accuracy increases. | Should Have | US-14, US-15 | Kolluru Rithvik (AI/ML Developer) | **Completed** |
+
+---
+
+## Quality Assurance & Test Case Matrix
+
+The verification strategy comprised end-to-end integration, functional validation of multi-agent flows, and schema adherence tests. **All 20 test cases achieved a 100% pass rate**, complemented by 174 automated CI/CD pytest suites.
+
+> **Artifact References**:
+> - Test Case Specification: [`docs/project-management/test-cases-and-results.md`](docs/project-management/test-cases-and-results.md)
+> - Raw CSV Export: [`.github/project-management/test-cases-and-results.csv`](.github/project-management/test-cases-and-results.csv)
+
+### Test Execution Matrix
+
+| TC # | Test Case Name | Test Procedure | Condition to be Tested | Expected Result | Actual Result |
+|:---:|:---|:---|:---|:---|:---:|
+| **TC-01** | **Severity Classification** | Submit bugs of varying impact (crash/data loss, major feature failure, partial failure, cosmetic issue) and view the Triage Agent output. | Bug descriptions represent Critical, High, Medium, and Low severity. | Triage Agent should classify each bug with the correct severity: Critical, High, Medium, or Low. | **Passed** |
+| **TC-02** | **Priority Assignment** | Submit bugs of varying impact and urgency and check the priority assigned by the Triage Agent. | Priority depends on bug impact and urgency. | Agent should assign an appropriate priority consistent with impact and urgency. | **Passed** |
+| **TC-03** | **Affected Component Identification** | Submit a bug mentioning a specific module (e.g., authentication, file upload) and check the component field. | Bug description contains component/module information. | Agent should identify the correct affected software component. | **Passed** |
+| **TC-04** | **Confidence Score and Reasoning** | Submit a bug and check the confidence score and reasoning in the Triage Agent output. | Confidence score and reasoning are generated with each classification. | A valid confidence score and a short explanation for severity, priority, and component should be displayed. | **Passed** |
+| **TC-05** | **Triage Output Schema** | Submit a bug and validate the Triage Agent output against the defined schema. | Output follows the defined structured schema. | Output should contain severity, priority, component, confidence, and reasoning in valid structured format. | **Passed** |
+| **TC-06** | **Exception Type and Error Message** | Submit a bug with a stack trace containing an exception (e.g., NullPointerException) and check the Log Analysis output. | Stack trace/logs contain an exception type and error message. | Agent should identify the exception type and extract the relevant error message. | **Passed** |
+| **TC-07** | **Failure Point Identification** | Submit a stack trace with file, class, method, and line number and check the failure point. | Stack trace includes failure location details. | Agent should identify file name, class, method, and line number of the failure. | **Passed** |
+| **TC-08** | **Code Path Identification** | Submit a multi-frame stack trace and check the identified code path. | Stack trace has a sequence of call entries. | Agent should identify the probable affected code path from the stack-trace sequence. | **Passed** |
+| **TC-09** | **Multiple Log Formats** | Submit stack traces in different formats (Java, Python, JavaScript) and check the output. | Logs are in varied stack-trace formats. | Agent should parse every supported format successfully. | **Passed** |
+| **TC-10** | **Log Analysis Output Schema** | Submit a stack trace and validate the Log Analysis Agent output against the schema. | Output follows the defined structured schema. | Output should contain exception type, error message, failure point, code path, and confidence score. | **Passed** |
+| **TC-11** | **Automatic Trigger and Input Routing** | Submit a new bug with description, stack trace, and logs through the Bug Submission Module and observe agent execution. | New bug submission triggers both agents. | Triage and Log Analysis agents should run automatically, each receiving its appropriate input. | **Passed** |
+| **TC-12** | **Combined Bug Context** | Submit a bug and view the combined output after both agents complete. | Both agent outputs are available. | Outputs should be merged into a single common structured bug context. | **Passed** |
+| **TC-13** | **Downstream Agent Handoff** | Submit a bug and check that the bug context can be consumed by a downstream agent. | Bug context is needed by Milestone 3 agents. | Triage and Log Analysis outputs should be passed as context to downstream agents. | **Passed** |
+| **TC-14** | **Missing Logs Handling** | Submit a bug with only a description and no logs or stack trace. | Log data is missing. | System should handle the missing logs gracefully and still complete triage. | **Passed** |
+| **TC-15** | **Invalid Input and Agent Failure** | Submit malformed input, and separately simulate a failure in one agent. | Input is invalid, or an agent fails/returns incomplete analysis. | System should show an appropriate error or fallback and not crash. | **Passed** |
+| **TC-16** | **End-to-End Orchestration** | Submit multiple bugs with different inputs and verify the complete flow. | Multiple bug submissions are processed. | Each bug should be processed end-to-end with correct combined output. | **Passed** |
+| **TC-17** | **Varied Bug Input Formats** | Submit bugs with only a description, description with stack trace, only logs, and messy unstructured logs. | Bug inputs vary in format and completeness. | Agents should produce accurate outputs for every input type without failing. | **Passed** |
+| **TC-18** | **Triage Accuracy Measurement** | Run the seeded dataset through the Triage Agent and compare predictions with expected labels. | Seeded dataset has expected severity, priority, and component labels. | Accuracy for severity, priority, and component should be calculated and reported. | **Passed** |
+| **TC-19** | **Log Analysis Accuracy Measurement** | Run the seeded dataset through the Log Analysis Agent and compare predictions with verified results. | Seeded dataset has verified exception, failure point, and code path. | Accuracy for exception type, failure point, and code path should be calculated and reported. | **Passed** |
+| **TC-20** | **Failure Analysis and Improvement** | Record incorrect predictions, update prompts/rules/parsing logic, and re-run the tests. | Some predictions differ from expected labels. | Common failure cases should be identified and accuracy should improve after refinement. | **Passed** |
+
+---
+
+## Internal Defect Tracking Log
+
+During the development sprints, 12 internal defects were detected, audited, and resolved. All defects have been closed following strict root-cause corrective actions.
+
+> **Artifact References**:
+> - Defect Audit Documentation: [`docs/project-management/defect-tracking-log.md`](docs/project-management/defect-tracking-log.md)
+> - Raw CSV Export: [`.github/project-management/defect-tracking-log.csv`](.github/project-management/defect-tracking-log.csv)
+
+### Defect Audit Summary
+- **Total Defects Logged**: 12
+- **Total Closed / Resolved**: 12 (**100% Resolution Rate**)
+- **Categories**: Logical (8), Standards (2), Maintainability (1), User Interface (1)
+
+| Sl No | Submitted By | Submitted Date | Description | Detected Sprint | Type of Defect | Action Taken | Action Taken Date | Status |
+|:---:|:---|:---:|:---|:---:|:---:|:---|:---:|:---:|
+| **1** | Kolluru Rithvik | 2026-11-17 | Triage Agent classifies application crash bugs as Medium instead of Critical severity. | Sprint 1 | Logical | Refined severity prompt with crash and data-loss examples. | 2026-11-18 | **Closed** |
+| **2** | Kolluru Rithvik | 2026-11-17 | Triage Agent assigns a priority that does not match the severity for urgent bugs. | Sprint 1 | Logical | Added priority rules based on impact and urgency. | 2026-11-18 | **Closed** |
+| **3** | Kolluru Rithvik | 2026-11-18 | Confidence score is missing from triage output when the component is not detected. | Sprint 1 | Standards | Added default confidence handling in the output schema. | 2026-11-18 | **Closed** |
+| **4** | Kolluru Rithvik | 2026-11-19 | Log Analysis Agent fails to extract the exception type from Python tracebacks. | Sprint 2 | Logical | Added Python traceback parsing rules. | 2026-11-20 | **Closed** |
+| **5** | Kolluru Rithvik | 2026-11-19 | Failure point shows the wrong line number for nested stack-trace entries. | Sprint 2 | Logical | Corrected parsing to select the top application frame. | 2026-11-20 | **Closed** |
+| **6** | Kolluru Rithvik | 2026-11-20 | Parser breaks on stack traces that contain multi-line error messages. | Sprint 2 | Maintainability | Refactored parser into format-specific handlers. | 2026-11-21 | **Closed** |
+| **7** | Kolluru Rithvik | 2026-11-21 | Triage and Log Analysis agents run one after another instead of together on bug submission. | Sprint 3 | Logical | Updated orchestration to run both agents in parallel. | 2026-11-22 | **Closed** |
+| **8** | Kolluru Rithvik | 2026-11-22 | Combined bug context is missing triage output when the Log Analysis Agent fails. | Sprint 3 | Logical | Added error handling and fallback for agent failures. | 2026-11-22 | **Closed** |
+| **9** | Kolluru Rithvik | 2026-11-22 | Bug context uses inconsistent field names across the two agent outputs. | Sprint 3 | Standards | Standardized field names in the common structured schema. | 2026-11-23 | **Closed** |
+| **10** | Kolluru Rithvik | 2026-11-23 | Accuracy test shows Low severity bugs being classified as Medium. | Sprint 4 | Logical | Adjusted severity rules and re-ran the seeded dataset tests. | 2026-11-24 | **Closed** |
+| **11** | Kolluru Rithvik | 2026-11-24 | Messy unstructured logs return an empty failure point. | Sprint 4 | Logical | Added log cleaning step before parsing. | 2026-11-25 | **Closed** |
+| **12** | Kolluru Rithvik | 2026-11-24 | Confidence score is truncated on the bug results page. | Sprint 4 | User Interface | Updated results display component to show the full score. | 2026-11-25 | **Closed** |
+
+---
+
 ## Validation & Accuracy Evaluation
 
 Validation harness runs against historical defect samples and test fixture logs:
@@ -290,6 +389,9 @@ python -m app.agents.validation.runner
 
 ```text
 Intelligent-Bug-Diagnosis-Platform/
+├── .github/
+│   ├── project-management/           # Sprint backlogs, test matrices, defect log CSVs
+│   └── workflows/ci.yml              # Automated GitHub Actions CI pipeline
 ├── frontend/                         # React + Vite Frontend
 │   ├── src/
 │   │   ├── components/
@@ -328,6 +430,7 @@ Intelligent-Bug-Diagnosis-Platform/
 │   └── requirements.txt
 ├── data/                             # Processed defect data & sample fixtures
 ├── docs/                             # Architecture diagrams, rubrics & contracts
+│   └── project-management/           # Sprint user stories, test matrices, defect logs
 ├── tests/                            # 174 automated unit & integration tests
 └── README.md
 ```

@@ -1,0 +1,13 @@
+Sl No,Submitted By,Submitted Date,Description,Detected Sprint,Assigned To,Type Of Defect,Action Taken,Action Taken Date,Status(Open/Closed),Remarks
+1,Kolluru Rithvik,2026-11-17,Triage Agent classifies application crash bugs as Medium instead of Critical severity.,Sprint 1,AI/ML Developer,Logical,Refined severity prompt with crash and data-loss examples.,2026-11-18,Closed,
+2,Kolluru Rithvik,2026-11-17,Triage Agent assigns a priority that does not match the severity for urgent bugs.,Sprint 1,AI/ML Developer,Logical,Added priority rules based on impact and urgency.,2026-11-18,Closed,
+3,Kolluru Rithvik,2026-11-18,Confidence score is missing from triage output when the component is not detected.,Sprint 1,Backend Developer,Standards,Added default confidence handling in the output schema.,2026-11-18,Closed,
+4,Kolluru Rithvik,2026-11-19,Log Analysis Agent fails to extract the exception type from Python tracebacks.,Sprint 2,AI/ML Developer,Logical,Added Python traceback parsing rules.,2026-11-20,Closed,
+5,Kolluru Rithvik,2026-11-19,Failure point shows the wrong line number for nested stack-trace entries.,Sprint 2,AI/ML Developer,Logical,Corrected parsing to select the top application frame.,2026-11-20,Closed,
+6,Kolluru Rithvik,2026-11-20,Parser breaks on stack traces that contain multi-line error messages.,Sprint 2,Backend Developer,Maintainability,Refactored parser into format-specific handlers.,2026-11-21,Closed,
+7,Kolluru Rithvik,2026-11-21,Triage and Log Analysis agents run one after another instead of together on bug submission.,Sprint 3,Backend Developer,Logical,Updated orchestration to run both agents in parallel.,2026-11-22,Closed,
+8,Kolluru Rithvik,2026-11-22,Combined bug context is missing triage output when the Log Analysis Agent fails.,Sprint 3,Backend Developer,Logical,Added error handling and fallback for agent failures.,2026-11-22,Closed,
+9,Kolluru Rithvik,2026-11-22,Bug context uses inconsistent field names across the two agent outputs.,Sprint 3,Backend Developer,Standards,Standardized field names in the common structured schema.,2026-11-23,Closed,
+10,Kolluru Rithvik,2026-11-23,Accuracy test shows Low severity bugs being classified as Medium.,Sprint 4,AI/ML Developer,Logical,Adjusted severity rules and re-ran the seeded dataset tests.,2026-11-24,Closed,
+11,Kolluru Rithvik,2026-11-24,Messy unstructured logs return an empty failure point.,Sprint 4,AI/ML Developer,Logical,Added log cleaning step before parsing.,2026-11-25,Closed,
+12,Kolluru Rithvik,2026-11-24,Confidence score is truncated on the bug results page.,Sprint 4,Frontend Developer,User Interface,Updated results display component to show the full score.,2026-11-25,Closed,
